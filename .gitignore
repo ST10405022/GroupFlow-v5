@@ -3,7 +3,8 @@
 build/
 
 # Local configuration file (sdk path, etc)
-local.properties
+# Ensure it only matches at the project root.
+/local.properties
 
 # Log/OS Files
 *.log
@@ -15,12 +16,11 @@ captures/
 *.apk
 output-metadata.json
 
-# IntelliJ
-*.iml
+# IntelliJ / Android Studio
+# Ignore the entire .idea directory. This is generally preferred.
 .idea/
-misc.xml
-deploymentTargetDropDown.xml
-render.experimental.xml
+# .iml files are module-specific IntelliJ files
+*.iml
 
 # Keystore files
 *.jks
@@ -31,3 +31,6 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# Mac OS specific
+.DS_Store
