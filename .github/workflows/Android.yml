@@ -1,0 +1,48 @@
+# Name of the workflow as it appears in the GitHub Actions UI
+name: Android CI
+
+# Triggers the workflow on push or pull request events to the specified branches
+on:
+  push:
+    branches: [ "main" ]  # Runs when code is pushed to main
+  pull_request:
+    branches: [ "main" ]  # Also runs when a PR targets main
+
+jobs:
+  build-test:  # A single job that builds and tests the project
+    runs-on: ubuntu-latest  # GitHub-hosted Ubuntu runner
+
+    steps:
+      # Step 1: Checkout the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Java Development Kit (JDK) version 17, required for Android builds
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin  # Recommended OpenJDK distribution
+          java-version: 17       # Matches Android Gradle plugin requirements
+
+      # Step 3: Grant execute permission to the Gradle wrapper script
+      - name: Grant execute permission for Gradlew
+        run: chmod +x ./gradlew
+
+      # Step 4: Build the project in debug mode (produces APK)
+      - name: Build project
+        run: ./gradlew assembleDebug
+
+      # Step 5: Run Android lint checks to catch coding errors and styling issues
+      #- name: Run lint
+      #  run: ./gradlew lintDebug
+
+      # Step 6: Run unit tests (e.g., for domain logic or view models)
+      #- name: Run unit tests
+      #  run: ./gradlew testDebugUnitTest
+
+      # Step 7: Upload the generated APK as a build artifact so it can be downloaded
+      #- name: Upload APK artifact
+      #  uses: actions/upload-artifact@v3
+      #  with:
+      #    name: debug-apk  # Artifact label
+      #    path: app/build/outputs/apk/debug/app-debug.apk  # Path to the debug APK
