@@ -1,3 +1,33 @@
 <resources>
     <string name="app_name">GroupFlow</string>
+    <string name="patient_hub">Patient Hub</string>
+    <string name="appointments">Appointments</string>
+    <string name="ultrascans">Ultrascans</string>
+    <string name="reviews">Reviews</string>
+    <string name="clinic_info">Clinic Info</string>
+    <string name="info">Info</string>
+    <string name="home">Home</string>
+    <string name="notifications">Notifications</string>
+    <string name="add_appointment">Add New Appointment</string>
+    <string name="contact">Contact</string>
+    <string name="clinic_address">Clinic Address</string>
+    <string name="clinic_name">Clinic Name</string>
+    <string name="leave_review">Leave a Review</string>
+    <string name="your_review">Your Review</string>
+    <string name="submit">Submit</string>
+    <string name="request_appointment">Request Appointment</string>
+    <string name="select_date">Select Date</string>
+    <string name="select_time">Select Time</string>
+    <string name="notes_optional">Notes (Optional)</string>
+    <string name="submit_request">Submit Request</string>
+    <string name="profile">Profile</string>
+    <string name="profile_picture">Profile Picture</string>
+    <string name="john_example_com">john@example.com</string>
+    <string name="john_doe">John Doe</string>
+    <string name="register">Register</string>
+    <string name="full_name">Full Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="no_account_register">No Account? Register</string>
 </resources>

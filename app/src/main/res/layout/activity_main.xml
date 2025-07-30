@@ -1,19 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <!-- Top App Bar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/topAppBar"
+        style="@style/Widget.Material3.Toolbar"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:title="@string/patient_hub"
+        app:titleCentered="true"
+        app:menu="@menu/menu_main_toolbar"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Appointments Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardAppointments"
+        style="@style/MyCardStyle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topAppBar"
+        app:layout_constraintEnd_toStartOf="@+id/cardUltrascans"
+        app:layout_constraintWidth_percent="0.46"
+        app:layout_constraintHeight_percent="0.24"
+        android:layout_margin="8dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/appointments"
+            style="@style/LabelLarge"
+            app:drawableTopCompat="@drawable/ic_calendar"
+            android:paddingTop="16dp"
+            android:drawablePadding="8dp"/>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Ultrascans Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardUltrascans"
+        style="@style/MyCardStyle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toEndOf="@id/cardAppointments"
+        app:layout_constraintTop_toBottomOf="@id/topAppBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.46"
+        app:layout_constraintHeight_percent="0.24"
+        android:layout_margin="8dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/ultrascans"
+            style="@style/LabelLarge"
+            app:drawableTopCompat="@drawable/ic_ultrascan"
+            android:paddingTop="16dp"
+            android:drawablePadding="8dp"/>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Reviews Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardReviews"
+        style="@style/MyCardStyle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardAppointments"
+        app:layout_constraintEnd_toStartOf="@+id/cardClinicInfo"
+        app:layout_constraintWidth_percent="0.46"
+        app:layout_constraintHeight_percent="0.24"
+        android:layout_margin="8dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/reviews"
+            style="@style/LabelLarge"
+            app:drawableTopCompat="@drawable/ic_review"
+            android:paddingTop="16dp"
+            android:drawablePadding="8dp"/>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Clinic Info Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardClinicInfo"
+        style="@style/MyCardStyle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toEndOf="@id/cardReviews"
+        app:layout_constraintTop_toBottomOf="@id/cardUltrascans"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.46"
+        app:layout_constraintHeight_percent="0.24"
+        android:layout_margin="8dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/clinic_info"
+            style="@style/LabelLarge"
+            app:drawableTopCompat="@drawable/ic_info"
+            android:paddingTop="16dp"
+            android:drawablePadding="8dp"/>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Bottom Navigation -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        app:menu="@menu/bottom_nav_menu"
+        app:itemIconTint="@color/nav_item_color_state"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
