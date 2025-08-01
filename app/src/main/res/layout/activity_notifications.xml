@@ -5,13 +5,14 @@
     android:layout_height="match_parent"
     android:padding="16dp" >
 
+    <!-- Top Bar -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/topAppBarNotifications"
         style="@style/Widget.Material3.Toolbar"
         app:title="@string/notifications"
         app:titleCentered="true"
         app:navigationIcon="@drawable/ic_back"
-        app:menu="@menu/menu_notifications"
+        app:menu="@menu/menu_top_profile"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"

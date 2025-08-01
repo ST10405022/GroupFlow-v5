@@ -5,30 +5,32 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
+    <!-- Top Bar -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/topAppBarReviews"
         style="@style/Widget.Material3.Toolbar"
         app:title="@string/reviews"
         app:titleCentered="true"
         app:navigationIcon="@drawable/ic_back"
-        app:menu="@menu/menu_notifications"
+        app:menu="@menu/menu_toolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Reviews List -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerReviews"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:padding="16dp"
         android:contentDescription="@string/reviews"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:padding="8dp"
         app:layout_constraintTop_toBottomOf="@id/topAppBarReviews"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomNav"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:clipToPadding="false"/>
 
     <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView

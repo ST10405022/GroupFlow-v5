@@ -4,11 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.groupflow.databinding.ActivityMainBinding
 import com.example.groupflow.ui.appointments.AppointmentsActivity
 import com.example.groupflow.ui.info.ClinicInfoActivity
 import com.example.groupflow.ui.NotificationsActivity
+import com.example.groupflow.ui.info.DoctorInfoActivity
 import com.example.groupflow.ui.profile.UserProfileActivity
 import com.example.groupflow.ui.reviews.ReviewsActivity
 import com.example.groupflow.ui.ultrascans.UltrascansActivity
@@ -47,13 +49,17 @@ class MainActivity : AppCompatActivity() {
         // Bottom navigation click listeners
         binding.bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_home -> true // Already on home screen
+                R.id.nav_home -> {
+                    Toast.makeText(this, "Already viewing home", Toast.LENGTH_SHORT)
+                        .show()
+                    true
+                } // Already on home screen
                 R.id.nav_appointments -> { // Notifications menu item
                     startActivity(Intent(this, AppointmentsActivity::class.java))
                     true
                 }
-                R.id.nav_profile -> { // Profile menu item
-                    startActivity(Intent(this, UserProfileActivity::class.java))
+                R.id.nav_profile -> { // Doctor Info menu item
+                    startActivity(Intent(this, DoctorInfoActivity::class.java))
                     true
                 }
                 else -> false

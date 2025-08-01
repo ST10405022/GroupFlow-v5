@@ -10,6 +10,7 @@ import com.example.groupflow.databinding.ActivityUserProfileBinding
 import com.example.groupflow.ui.NotificationsActivity
 import com.example.groupflow.ui.auth.LoginActivity
 import com.example.groupflow.ui.hubs.EmployeeHubActivity
+import com.example.groupflow.ui.info.DoctorInfoActivity
 import com.google.android.material.navigation.NavigationBarView
 
 class UserProfileActivity : AppCompatActivity() {
@@ -29,7 +30,7 @@ class UserProfileActivity : AppCompatActivity() {
 
         // Toolbar back icon
         binding.topAppBarProfile.setNavigationOnClickListener {
-            finish()
+            onBackPressedDispatcher.onBackPressed()
         }
 
         // Toolbar menu (e.g., profile settings)
@@ -81,7 +82,7 @@ class UserProfileActivity : AppCompatActivity() {
                 true
             }
             R.id.nav_profile -> {
-                // Already on profile screen
+                startActivity(Intent(this, DoctorInfoActivity::class.java))
                 true
             }
             else -> false

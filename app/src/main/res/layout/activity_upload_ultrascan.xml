@@ -6,13 +6,14 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
+    <!-- Top Bar -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/topAppBarUpload"
         style="@style/Widget.Material3.Toolbar"
         app:title="@string/ultrascans"
         app:titleCentered="true"
         app:navigationIcon="@drawable/ic_back"
-        app:menu="@menu/menu_notifications"
+        app:menu="@menu/menu_toolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
@@ -29,4 +30,15 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"/>
 
+    <!-- Bottom Navigation -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        app:menu="@menu/bottom_nav_menu"
+        app:itemIconTint="@color/nav_item_color_state"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

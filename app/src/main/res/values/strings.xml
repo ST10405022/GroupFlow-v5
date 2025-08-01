@@ -34,6 +34,7 @@
     <string name="app_logo">App Login</string>
     <string name="upload_ultrascan_image">Upload Ultrascan Image</string>
     <string name="select_image">Select Image</string>
+    <string name="doctor_info">Doctor Info</string>
     <string-array name="roles_array">
         <item>Patient</item>
         <item>Employee</item>
@@ -44,4 +45,20 @@
     <string name="upload_ultrascan">Upload Ultrascan</string>
     <string name="employee_dashboard">Employee Dashboard</string>
     <string name="logout">Log Out</string>
+    <string name="phone">Phone</string>
+    <string name="specialty">Specialty</string>
+    <string name="dr_john_doe">Dr. John Doe</string>
+    <string name="doctor_name">Doctor Name</string>
+    <string name="doctor_picture">Doctor Picture</string>
+    <string name="clinic_logo">Clinic Logo</string>
+    <string name="limpopo_medical_centre">Limpopo Medical Centre</string>
+    <string name="email_example_com">email@example.com</string>
+    <string name="mon_fri_8am_5pm">Mon–Fri: 8am–5pm</string>
+    <string name="https_maps_example_com_clinic">https://maps.example.com/clinic</string>
+    <string name="_27_15_056_0782">+27 15 056 0782</string>
+    <string name="bic_clinic12345">BIC: CLINIC12345</string>
+    <string name="_2024_07_12">2024-07-12</string>
+    <string name="date">Date</string>
+    <string name="great_service">Great service!</string>
+    <string name="rating_stars">★★★★★</string>
 </resources>

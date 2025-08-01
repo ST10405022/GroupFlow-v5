@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
+    <!-- Top Bar -->
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/loginTitle"
         style="@style/TextAppearance.Material3.HeadlineSmall"
@@ -15,6 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Logo -->
     <ImageView
         android:id="@+id/logoImage"
         android:layout_width="160dp"

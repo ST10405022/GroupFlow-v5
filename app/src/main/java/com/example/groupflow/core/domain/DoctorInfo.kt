@@ -1,7 +1,9 @@
 package com.example.groupflow.core.domain
 
 data class DoctorInfo(
-    val clinicLocation: String,
-    val contactDetails: String,
-    val businessIdentifierCode: String
+    val name: String,
+    val specialty: String,
+    val phoneNumber: String,
+    val email: String,
+    val clinicName: String
 )

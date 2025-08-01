@@ -20,6 +20,7 @@ class RegisterActivity : AppCompatActivity() {
 
         // Set up click listener for the register button
         binding.buttonRegister.setOnClickListener {
+            // TODO: Add registration validation
             val name = binding.editTextName.text.toString()
             val email = binding.editTextRegisterEmail.text.toString()
             val password = binding.editTextRegisterPassword.text.toString()

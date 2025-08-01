@@ -4,59 +4,108 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp" >
+    android:padding="16dp">
 
-    <!-- Toolbar -->
+    <!-- Top App Bar -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/topAppBarClinic"
         style="@style/Widget.Material3.Toolbar"
         app:title="@string/clinic_info"
         app:titleCentered="true"
         app:navigationIcon="@drawable/ic_back"
+        app:menu="@menu/menu_top_profile"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Scrollable content -->
+    <!-- Scrollable Clinic Info Content -->
     <ScrollView
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:padding="16dp"
+        android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@id/topAppBarClinic"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomNav"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:padding="16dp">
+
+            <ImageView
+                android:id="@+id/imageClinic"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:src="@drawable/ic_clinic"
+                android:contentDescription="@string/clinic_logo"
+                android:layout_marginBottom="16dp" />
 
             <TextView
                 android:id="@+id/textClinicName"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/TextAppearance.Material3.TitleLarge"
-                android:text="@string/clinic_name" />
+                android:text="@string/clinic_name"
+                android:textAlignment="center" />
 
             <TextView
                 android:id="@+id/textClinicAddress"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/TextAppearance.Material3.BodyLarge"
-                android:text="@string/clinic_address"
-                android:layout_marginTop="8dp" />
+                android:text="@string/limpopo_medical_centre"
+                android:layout_marginTop="8dp"
+                android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/textClinicEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/email_example_com"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_marginTop="8dp"
+                android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/textOpeningHours"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/mon_fri_8am_5pm"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_marginTop="8dp"
+                android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/textLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/https_maps_example_com_clinic"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_marginTop="8dp"
+                android:textAlignment="center" />
 
             <TextView
                 android:id="@+id/textContact"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/_27_15_056_0782"
                 style="@style/TextAppearance.Material3.BodyMedium"
-                android:text="@string/contact"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="8dp"
+                android:textAlignment="center" />
 
+            <TextView
+                android:id="@+id/textBusinessCode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/bic_clinic12345"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_marginTop="8dp"
+                android:textAlignment="center" />
         </LinearLayout>
     </ScrollView>
 
@@ -71,5 +120,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

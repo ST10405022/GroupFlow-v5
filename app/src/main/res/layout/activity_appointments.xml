@@ -20,7 +20,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:navigationIcon="@drawable/ic_back"
-        app:menu="@menu/menu_notifications" />
+        app:menu="@menu/menu_toolbar" />
 
     <!-- RecyclerView for Appointment List -->
     <androidx.recyclerview.widget.RecyclerView

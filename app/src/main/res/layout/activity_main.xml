@@ -14,11 +14,13 @@
         android:layout_height="wrap_content"
         app:title="@string/patient_hub"
         app:titleCentered="true"
-        app:menu="@menu/menu_main_toolbar"
+        app:menu="@menu/menu_toolbar"
+        app:navigationIcon="@drawable/ic_notifications"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Logo -->
     <ImageView
         android:id="@+id/logoImage"
         android:layout_width="160dp"
