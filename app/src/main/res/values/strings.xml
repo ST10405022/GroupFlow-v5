@@ -30,4 +30,18 @@
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="no_account_register">No Account? Register</string>
+    <string name="skip_login">Skip Login</string>
+    <string name="app_logo">App Login</string>
+    <string name="upload_ultrascan_image">Upload Ultrascan Image</string>
+    <string name="select_image">Select Image</string>
+    <string-array name="roles_array">
+        <item>Patient</item>
+        <item>Employee</item>
+    </string-array>
+    <string name="role_patient">Role: Patient</string>
+    <string name="role_employee">Role: Employee</string>
+    <string name="role">Role</string>
+    <string name="upload_ultrascan">Upload Ultrascan</string>
+    <string name="employee_dashboard">Employee Dashboard</string>
+    <string name="logout">Log Out</string>
 </resources>
