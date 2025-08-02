@@ -78,6 +78,7 @@ com.example.groupflow
 │   ├── ClinicInfoActivity.kt
 │   └── NotificationsActivity.kt
 │
+├── GroupFlowApplication    //  base Application class for global initialisation 
 └── MainActivity.kt         // Acts as Patient Dashboard
 ```
 
