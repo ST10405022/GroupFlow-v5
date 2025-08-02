@@ -53,12 +53,22 @@
         <item name="android:fontFamily">@font/poppins</item>
     </style>
 
+    <!-- Bottom Navigation -->
     <style name="MyToolbarStyle" parent="Widget.Material3.Toolbar">
         <item name="titleTextAppearance">@style/Toolbar.TitleText</item>
     </style>
 
+    <!-- Toolbar Title -->
     <style name="Toolbar.TitleText" parent="TextAppearance.Material3.TitleLarge">
         <item name="fontFamily">@font/poppins</item>
     </style>
+
+    <!-- Toolbar Title Size -->
+    <style name="ToolbarTitleStyle" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textSize">18sp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
 
 </resources>

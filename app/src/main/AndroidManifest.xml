@@ -2,7 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
     <application
+        android:name=".GroupFlowApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -11,6 +16,7 @@
         android:roundIcon="@drawable/ic_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.GroupFlow"
+
         tools:targetApi="31">
         <activity
             android:name=".ui.auth.LoginActivity"
@@ -22,15 +28,18 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
-        <activity android:name=".ui.auth.RegisterActivity" />
-        <activity android:name=".ui.NotificationsActivity" />
-        <activity android:name=".ui.UserProfileActivity" />
-        <activity android:name=".ui.info.ClinicInfoActivity" />
-        <activity android:name=".ui.ultrascans.UltrascansActivity" />
         <activity android:name=".ui.appointments.AppointmentsActivity" />
         <activity android:name=".ui.appointments.RequestAppointmentActivity" />
+        <activity android:name=".ui.auth.RegisterActivity" />
+        <activity android:name=".ui.hubs.EmployeeHubActivity" />
+        <activity android:name=".ui.info.ClinicInfoActivity" />
+        <activity android:name=".ui.info.DoctorInfoActivity" />
+        <activity android:name=".ui.profile.UserProfileActivity" />
         <activity android:name=".ui.reviews.ReviewsActivity" />
         <activity android:name=".ui.reviews.LeaveReviewActivity" />
+        <activity android:name=".ui.ultrascans.UltrascansActivity" />
+        <activity android:name=".ui.ultrascans.UploadUltrascanActivity" />
+        <activity android:name=".ui.NotificationsActivity" />
     </application>
 
 </manifest>

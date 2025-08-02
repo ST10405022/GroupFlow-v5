@@ -15,6 +15,8 @@ class RegisterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Initialize View Binding
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -35,6 +37,10 @@ class RegisterActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "Please fill in all fields with valid input", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        binding.registerTitle.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
         }
     }
 }

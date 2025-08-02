@@ -18,7 +18,10 @@ class LeaveReviewActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_leave_review)
+
+        binding = ActivityLeaveReviewBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         binding.topAppBarReview.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
@@ -30,18 +33,12 @@ class LeaveReviewActivity : AppCompatActivity() {
                     Toast.makeText(this, "Already viewing profile", Toast.LENGTH_SHORT).show()
                     true
                 }
-
                 R.id.menu_logout -> {
                     Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
 
                     val intent = Intent(this, LoginActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
-                    true
-                }
-
-                R.id.menu_notifications -> {
-                    startActivity(Intent(this, NotificationsActivity::class.java))
                     true
                 }
 
@@ -62,6 +59,10 @@ class LeaveReviewActivity : AppCompatActivity() {
                 }
                 R.id.nav_profile -> { // Doctor Info menu item
                     startActivity(Intent(this, DoctorInfoActivity::class.java))
+                    true
+                }
+                R.id.nav_notifications -> { // Notifications menu item
+                    startActivity(Intent(this, NotificationsActivity::class.java))
                     true
                 }
                 else -> false

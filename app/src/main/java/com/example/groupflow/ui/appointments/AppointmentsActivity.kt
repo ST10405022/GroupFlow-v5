@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.groupflow.MainActivity
 import com.example.groupflow.R
 import com.example.groupflow.databinding.ActivityAppointmentsBinding
+import com.example.groupflow.ui.NotificationsActivity
 import com.example.groupflow.ui.auth.LoginActivity
 import com.example.groupflow.ui.info.DoctorInfoActivity
 import com.example.groupflow.ui.profile.UserProfileActivity
@@ -16,7 +17,17 @@ class AppointmentsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_appointments)
+
+        // Initialize View Binding
+        binding = ActivityAppointmentsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // Set up the Add Appointment button
+        binding.fabAddAppointment.setOnClickListener {
+            startActivity(Intent(this, RequestAppointmentActivity::class.java))
+        }
+
+        // Set up the top app bar
         binding.topAppBarAppointments.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
@@ -37,6 +48,9 @@ class AppointmentsActivity : AppCompatActivity() {
             }
         }
 
+        // Highlight correct nav item
+        binding.bottomNav.selectedItemId = R.id.nav_appointments
+
         // Bottom navigation click listeners
         binding.bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -51,6 +65,10 @@ class AppointmentsActivity : AppCompatActivity() {
 
                 R.id.nav_profile -> { // Doctor Info menu item
                     startActivity(Intent(this, DoctorInfoActivity::class.java))
+                    true
+                }
+                R.id.nav_notifications -> { // Notifications menu item
+                    startActivity(Intent(this, NotificationsActivity::class.java))
                     true
                 }
                 else -> false

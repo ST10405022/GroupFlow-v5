@@ -22,8 +22,14 @@ class ReviewsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityReviewsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Add Review button click listener
+        binding.fabAddReview.setOnClickListener {
+            startActivity(Intent(this, LeaveReviewActivity::class.java))
+        }
 
         // Back button behavior
         binding.topAppBarReviews.setNavigationOnClickListener {
@@ -32,7 +38,7 @@ class ReviewsActivity : AppCompatActivity() {
         binding.topAppBarReviews.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_profile -> {
-                    Toast.makeText(this, "Already viewing profile", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this, UserProfileActivity::class.java))
                     true
                 }
 
@@ -43,12 +49,6 @@ class ReviewsActivity : AppCompatActivity() {
                     startActivity(intent)
                     true
                 }
-
-                R.id.menu_notifications -> {
-                    startActivity(Intent(this, NotificationsActivity::class.java))
-                    true
-                }
-
                 else -> false
             }
         }
@@ -66,6 +66,10 @@ class ReviewsActivity : AppCompatActivity() {
                 }
                 R.id.nav_profile -> { // Doctor Info menu item
                     startActivity(Intent(this, DoctorInfoActivity::class.java))
+                    true
+                }
+                R.id.nav_notifications -> { // Notifications menu item
+                    startActivity(Intent(this, NotificationsActivity::class.java))
                     true
                 }
                 else -> false

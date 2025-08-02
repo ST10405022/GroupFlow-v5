@@ -17,7 +17,11 @@ class NotificationsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_notifications)
+
+        binding = ActivityNotificationsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // Toolbar back icon
         binding.topAppBarNotifications.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
@@ -40,6 +44,9 @@ class NotificationsActivity : AppCompatActivity() {
             }
         }
 
+        // Highlight correct nav item
+        binding.bottomNav.selectedItemId = R.id.nav_notifications
+
         // Bottom navigation click listeners
         binding.bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -53,6 +60,11 @@ class NotificationsActivity : AppCompatActivity() {
                 }
                 R.id.nav_profile -> { // Doctor Info menu item
                     startActivity(Intent(this, DoctorInfoActivity::class.java))
+                    true
+                }
+                R.id.nav_notifications -> { // Notifications menu item
+                    Toast.makeText(this, "Already viewing notifications",
+                        Toast.LENGTH_SHORT).show()
                     true
                 }
                 else -> false

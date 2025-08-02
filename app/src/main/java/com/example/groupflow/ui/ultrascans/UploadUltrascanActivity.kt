@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.groupflow.MainActivity
 import com.example.groupflow.R
 import com.example.groupflow.databinding.ActivityUploadUltrascanBinding
+import com.example.groupflow.ui.NotificationsActivity
 import com.example.groupflow.ui.appointments.AppointmentsActivity
 import com.example.groupflow.ui.auth.LoginActivity
 import com.example.groupflow.ui.info.DoctorInfoActivity
@@ -17,10 +18,15 @@ class UploadUltrascanActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_upload_ultrascan)
+
+        binding = ActivityUploadUltrascanBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // Toolbar back icon
         binding.topAppBarUpload.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
+
         binding.topAppBarUpload.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_profile -> {
@@ -53,6 +59,10 @@ class UploadUltrascanActivity : AppCompatActivity() {
                 }
                 R.id.nav_profile -> { // Doctor Info menu item
                     startActivity(Intent(this, DoctorInfoActivity::class.java))
+                    true
+                }
+                R.id.nav_notifications -> { // Notifications menu item
+                    startActivity(Intent(this, NotificationsActivity::class.java))
                     true
                 }
                 else -> false

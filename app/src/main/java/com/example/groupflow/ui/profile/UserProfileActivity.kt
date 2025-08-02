@@ -8,6 +8,7 @@ import com.example.groupflow.MainActivity
 import com.example.groupflow.R
 import com.example.groupflow.databinding.ActivityUserProfileBinding
 import com.example.groupflow.ui.NotificationsActivity
+import com.example.groupflow.ui.appointments.AppointmentsActivity
 import com.example.groupflow.ui.auth.LoginActivity
 import com.example.groupflow.ui.hubs.EmployeeHubActivity
 import com.example.groupflow.ui.info.DoctorInfoActivity
@@ -25,6 +26,7 @@ class UserProfileActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityUserProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -46,10 +48,6 @@ class UserProfileActivity : AppCompatActivity() {
                     val intent = Intent(this, LoginActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
-                    true
-                }
-                R.id.menu_notifications -> {
-                    startActivity(Intent(this, NotificationsActivity::class.java))
                     true
                 }
                 else -> false
@@ -78,11 +76,15 @@ class UserProfileActivity : AppCompatActivity() {
                 true
             }
             R.id.nav_appointments -> {
-                Toast.makeText(this, "Appointments screen coming soon", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, AppointmentsActivity::class.java))
                 true
             }
             R.id.nav_profile -> {
                 startActivity(Intent(this, DoctorInfoActivity::class.java))
+                true
+            }
+            R.id.nav_notifications -> {
+                startActivity(Intent(this, NotificationsActivity::class.java))
                 true
             }
             else -> false

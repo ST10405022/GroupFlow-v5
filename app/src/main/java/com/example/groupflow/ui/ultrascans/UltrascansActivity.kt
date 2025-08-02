@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.groupflow.MainActivity
 import com.example.groupflow.R
 import com.example.groupflow.databinding.ActivityUltrascansBinding
+import com.example.groupflow.ui.NotificationsActivity
 import com.example.groupflow.ui.appointments.AppointmentsActivity
 import com.example.groupflow.ui.auth.LoginActivity
 import com.example.groupflow.ui.info.DoctorInfoActivity
@@ -16,10 +17,15 @@ class UltrascansActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUltrascansBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_ultrascans)
+
+        binding = ActivityUltrascansBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // Toolbar back icon
         binding.topAppBarUltrascans.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
+
         binding.topAppBarUltrascans.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_profile -> {
@@ -52,6 +58,10 @@ class UltrascansActivity : AppCompatActivity() {
                 }
                 R.id.nav_profile -> { // Doctor Info menu item
                     startActivity(Intent(this, DoctorInfoActivity::class.java))
+                    true
+                }
+                R.id.nav_notifications -> { // Notifications menu item
+                    startActivity(Intent(this, NotificationsActivity::class.java))
                     true
                 }
                 else -> false

@@ -4,10 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.groupflow.MainActivity
 import com.example.groupflow.R
 import com.example.groupflow.databinding.ActivityEmployeeHubBinding
+import com.example.groupflow.ui.NotificationsActivity
 import com.example.groupflow.ui.appointments.AppointmentsActivity
+import com.example.groupflow.ui.auth.LoginActivity
 import com.example.groupflow.ui.info.DoctorInfoActivity
 import com.example.groupflow.ui.profile.UserProfileActivity
 import com.example.groupflow.ui.ultrascans.UploadUltrascanActivity
@@ -18,6 +19,8 @@ class EmployeeHubActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Initialize View Binding
         binding = ActivityEmployeeHubBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -40,7 +43,13 @@ class EmployeeHubActivity : AppCompatActivity() {
                     startActivity(intent)
                     true
                 }
-
+                R.id.menu_logout -> {
+                    Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, LoginActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    true
+                }
                 else -> false
             }
         }
@@ -51,12 +60,16 @@ class EmployeeHubActivity : AppCompatActivity() {
                     Toast.makeText(this, "Already viewing home", Toast.LENGTH_SHORT).show()
                     true
                 } // Home menu item
-                R.id.nav_appointments -> { // Notifications menu item
+                R.id.nav_appointments -> { // Appointments menu item
                     startActivity(Intent(this, AppointmentsActivity::class.java))
                     true
                 }
                 R.id.nav_profile -> { // Doctor Info menu item
                     startActivity(Intent(this, DoctorInfoActivity::class.java))
+                    true
+                }
+                R.id.nav_notifications -> { // Notifications menu item
+                    startActivity(Intent(this, NotificationsActivity::class.java))
                     true
                 }
                 else -> false

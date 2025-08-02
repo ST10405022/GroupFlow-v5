@@ -10,6 +10,7 @@ import com.example.groupflow.databinding.ActivityMainBinding
 import com.example.groupflow.ui.appointments.AppointmentsActivity
 import com.example.groupflow.ui.info.ClinicInfoActivity
 import com.example.groupflow.ui.NotificationsActivity
+import com.example.groupflow.ui.auth.LoginActivity
 import com.example.groupflow.ui.info.DoctorInfoActivity
 import com.example.groupflow.ui.profile.UserProfileActivity
 import com.example.groupflow.ui.reviews.ReviewsActivity
@@ -21,6 +22,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -46,6 +48,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, ClinicInfoActivity::class.java))
         }
 
+        // Highlight correct nav item
+        binding.bottomNav.selectedItemId = R.id.nav_home
+
         // Bottom navigation click listeners
         binding.bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -62,6 +67,10 @@ class MainActivity : AppCompatActivity() {
                     startActivity(Intent(this, DoctorInfoActivity::class.java))
                     true
                 }
+                R.id.nav_notifications -> { // Notifications menu item
+                    startActivity(Intent(this, NotificationsActivity::class.java))
+                    true
+                }
                 else -> false
             }
         }
@@ -73,7 +82,7 @@ class MainActivity : AppCompatActivity() {
      * @return True to display the menu, false otherwise.
      */
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_main_toolbar, menu)
+        menuInflater.inflate(R.menu.menu_toolbar, menu)
         return true
     }
 
@@ -84,8 +93,11 @@ class MainActivity : AppCompatActivity() {
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.menu_notifications -> { // Notifications menu item
-                startActivity(Intent(this, NotificationsActivity::class.java))
+            R.id.menu_logout -> {
+                Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
                 true
             }
             R.id.menu_profile -> { // Profile menu item

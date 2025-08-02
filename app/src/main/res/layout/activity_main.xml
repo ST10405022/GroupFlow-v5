@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="8dp">
 
     <!-- Top App Bar -->
     <com.google.android.material.appbar.MaterialToolbar
@@ -15,7 +15,6 @@
         app:title="@string/patient_hub"
         app:titleCentered="true"
         app:menu="@menu/menu_toolbar"
-        app:navigationIcon="@drawable/ic_notifications"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -131,6 +130,7 @@
         android:layout_height="wrap_content"
         android:background="?attr/colorSurface"
         app:menu="@menu/bottom_nav_menu"
+        app:itemTextColor="@color/nav_item_color_state"
         app:itemIconTint="@color/nav_item_color_state"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

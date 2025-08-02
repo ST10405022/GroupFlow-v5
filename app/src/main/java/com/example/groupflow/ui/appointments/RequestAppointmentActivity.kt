@@ -7,15 +7,22 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.groupflow.MainActivity
 import com.example.groupflow.R
 import com.example.groupflow.databinding.ActivityRequestAppointmentBinding
+import com.example.groupflow.ui.NotificationsActivity
 import com.example.groupflow.ui.auth.LoginActivity
 import com.example.groupflow.ui.info.DoctorInfoActivity
 import com.example.groupflow.ui.profile.UserProfileActivity
 
 class RequestAppointmentActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityRequestAppointmentBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_request_appointment)
+
+        // Initialize View Binding
+        binding = ActivityRequestAppointmentBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         binding.topAppBarRequest.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
@@ -25,7 +32,6 @@ class RequestAppointmentActivity : AppCompatActivity() {
                     startActivity(Intent(this, UserProfileActivity::class.java))
                     true
                 }
-
                 R.id.menu_logout -> {
                     Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this, LoginActivity::class.java)
@@ -50,6 +56,10 @@ class RequestAppointmentActivity : AppCompatActivity() {
                 }
                 R.id.nav_profile -> { // Doctor Info menu item
                     startActivity(Intent(this, DoctorInfoActivity::class.java))
+                    true
+                }
+                R.id.nav_notifications -> { // Notifications menu item
+                    startActivity(Intent(this, NotificationsActivity::class.java))
                     true
                 }
                 else -> false
