@@ -1,15 +1,13 @@
 package com.example.groupflow.core.domain
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import java.time.LocalDateTime
 
-@RequiresApi(Build.VERSION_CODES.O)
 data class Review(
-    val id: String,
-    val patientId: String,
-    val rating: Int,
-    val comment: String,
+    val id: String = "",
+    val patientId: String = "",
+    val clinicId: String = "",
+    val rating: Int = 0,
+    val comment: String = "",
     val createdDate: LocalDateTime = LocalDateTime.now()
 ) {
     init {

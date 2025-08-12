@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "601678414625",
+    "project_id": "groupflow-520ee",
+    "storage_bucket": "groupflow-520ee.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:601678414625:android:1995af04ca790e7f663460",
+        "android_client_info": {
+          "package_name": "com.example.groupflow"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDdehZoY6Mqr2aoVIdH_aCR9FkuZbnTVs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

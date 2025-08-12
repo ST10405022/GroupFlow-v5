@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.groupflow" />
+                  <option name="mobileSdkAppId" value="1:601678414625:android:1995af04ca790e7f663460" />
+                  <option name="projectId" value="groupflow-520ee" />
+                  <option name="projectNumber" value="601678414625" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

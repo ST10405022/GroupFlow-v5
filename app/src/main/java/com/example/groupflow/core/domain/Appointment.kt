@@ -1,16 +1,14 @@
 package com.example.groupflow.core.domain
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import java.time.LocalDateTime
 
-@RequiresApi(Build.VERSION_CODES.O)
 data class Appointment(
-    val id: String,
-    val requestedDate: LocalDateTime,
+    val id: String = "",
+    val requestedDate: LocalDateTime = LocalDateTime.now(),
     val status: Status = Status.PENDING,
-    val patientId: String,
-    val employeeId: String? = null
+    val reason: String = "",
+    val patientId: String = "",
+    val employeeId: String = ""
 ) {
     enum class Status { PENDING, APPROVED, DECLINED }
     init {
