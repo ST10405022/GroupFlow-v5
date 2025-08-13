@@ -1,8 +1,9 @@
 package com.example.groupflow.core.service
 
 import com.example.groupflow.core.domain.UltrascanImage
+import java.io.InputStream
 
 interface ScanService {
-    fun uploads(scan: UltrascanImage): Boolean
-    fun retrieves(patientId: String): List<UltrascanImage>
+    suspend fun uploadScan(patientId: String, imageStream: InputStream, fileName: String?): Result<UltrascanImage>
+    suspend fun fetchScansForPatient(patientId: String): Result<List<UltrascanImage>>
 }

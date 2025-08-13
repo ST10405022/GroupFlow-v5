@@ -76,15 +76,7 @@ class ReviewsActivity : AppCompatActivity() {
             }
         }
 
-        // Sample data
-        val sampleReviews = listOf(
-            Review("1", "pat123", 5, "Excellent care!", LocalDateTime.now().minusDays(2)),
-            Review("2", "pat456", 4, "Very friendly staff.", LocalDateTime.now().minusWeeks(1)),
-            Review("3", "pat789", 3, "Average experience.", LocalDateTime.now().minusDays(5))
-        )
-
         // RecyclerView setup
         binding.recyclerReviews.layoutManager = LinearLayoutManager(this)
-        binding.recyclerReviews.adapter = ReviewAdapter(sampleReviews)
     }
 }

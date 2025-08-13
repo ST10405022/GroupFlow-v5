@@ -43,6 +43,9 @@ class RequestAppointmentActivity : AppCompatActivity() {
             }
         }
 
+        // Highlight correct nav item
+        binding.bottomNav.selectedItemId = R.id.nav_appointments
+
         // Bottom navigation click listeners
         binding.bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
