@@ -8,10 +8,19 @@ import com.example.groupflow.databinding.ActivityRegisterBinding
 import com.example.groupflow.MainActivity
 import com.example.groupflow.R
 import android.widget.Spinner
+import androidx.lifecycle.lifecycleScope
+import com.example.groupflow.core.domain.Role
+import com.example.groupflow.data.AppDatabase
+import com.example.groupflow.ui.hubs.EmployeeHubActivity
+import kotlinx.coroutines.launch
 
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterBinding
+
+    private fun showMessage(message: String){
+        Toast.makeText(this@RegisterActivity, message, Toast.LENGTH_SHORT).show()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,19 +32,64 @@ class RegisterActivity : AppCompatActivity() {
         // Set up click listener for the register button
         binding.buttonRegister.setOnClickListener {
             // TODO: Add registration validation
-            val name = binding.editTextName.text.toString()
-            val email = binding.editTextRegisterEmail.text.toString()
-            val password = binding.editTextRegisterPassword.text.toString()
-            val selectedRole = findViewById<Spinner>(R.id.spinnerRole).selectedItem.toString()
+            val name = binding.editTextName.text.toString().trim()
+            val email = binding.editTextRegisterEmail.text.toString().trim()
+            val password = binding.editTextRegisterPassword.text.toString().trim()
+            val selectedRole = findViewById<Spinner>(R.id.spinnerRole).selectedItem.toString().trim()
 
-            if (name.isNotBlank() && email.isNotBlank()
-                && password.length >= 8 && selectedRole.isNotBlank()) {
-                // Simulate successful registration
-                Toast.makeText(this, "Registered successfully", Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
-            } else {
-                Toast.makeText(this, "Please fill in all fields with valid input", Toast.LENGTH_SHORT).show()
+                                        // ensure that all the fields meet the registration criteria
+            if ((name.isNotBlank()) &&
+                (email.isNotBlank()) &&
+                (password.length >= 8) &&
+                (selectedRole.isNotBlank()))
+            {
+                // Registration implementation
+                lifecycleScope.launch {
+                    try
+                    {
+                        val registered = AppDatabase.authService.register(email, password, name, selectedRole)
+
+                        if (registered.isSuccess)
+                        {
+                            val profileResult = AppDatabase.authService.getCurrentUserProfile()
+                            val currentUser = profileResult.getOrNull()
+
+                            if (profileResult?.isSuccess == true && currentUser != null)
+                            {
+                                SessionCreation.loggedInUser = currentUser
+                                                                            // welcome the user
+                                showMessage("Welcome ${currentUser.name}")
+
+                                // redirect the user to their appropriate home screen
+                                when (currentUser.role)
+                                {
+                                    Role.PATIENT ->
+                                        startActivity(Intent(this@RegisterActivity, MainActivity::class.java))
+
+                                    Role.EMPLOYEE ->
+                                        startActivity(Intent(this@RegisterActivity, EmployeeHubActivity::class.java))
+                                }
+                                finish()
+                            }
+                            else
+                            {                            // show error message (unable to load profile)
+                                showMessage("Failed to register and load user profile")
+                            }
+                        }
+                        else
+                        {                                // show error message (unsuccessful login)
+                            showMessage("User registration failed")
+                        }
+                    }
+                    catch (e: Exception)
+                    {
+                        showMessage("Unable to register user profile")
+                    }
+                }
+            }
+            else
+            {
+                showMessage("Please fill in all fields with valid input")
             }
         }
 

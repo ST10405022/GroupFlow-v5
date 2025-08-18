@@ -84,7 +84,7 @@ class FirebaseAuthAdapter : AuthenticationService {
      * @throws Exception If there is an error fetching the user profile.
      * @see Result
      */
-    suspend fun getCurrentUserProfile(): Result<User> {
+    override suspend fun getCurrentUserProfile(): Result<User> {
         val uid = currentUserId() ?: return Result.failure(IllegalStateException("No user logged in"))
 
         return try {
