@@ -2,6 +2,7 @@ package com.example.groupflow.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Patterns
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.groupflow.databinding.ActivityRegisterBinding
@@ -41,7 +42,8 @@ class RegisterActivity : AppCompatActivity() {
             if ((name.isNotBlank()) &&
                 (email.isNotBlank()) &&
                 (password.length >= 8) &&
-                (selectedRole.isNotBlank()))
+                (selectedRole.isNotBlank()) &&
+                Patterns.EMAIL_ADDRESS.matcher(email).matches())
             {
                 // Registration implementation
                 lifecycleScope.launch {
@@ -56,8 +58,7 @@ class RegisterActivity : AppCompatActivity() {
 
                             if (profileResult?.isSuccess == true && currentUser != null)
                             {
-                                SessionCreation.loggedInUser = currentUser
-                                                                            // welcome the user
+                                SessionCreation.saveUser(this@RegisterActivity, currentUser) // welcome the user
                                 showMessage("Welcome ${currentUser.name}")
 
                                 // redirect the user to their appropriate home screen

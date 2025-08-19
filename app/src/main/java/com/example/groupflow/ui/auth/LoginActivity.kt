@@ -15,7 +15,6 @@ import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
 
-
     private lateinit var binding: ActivityLoginBinding
 
     private fun showMessage(message: String){
@@ -53,7 +52,8 @@ class LoginActivity : AppCompatActivity() {
                         if (profileResult?.isSuccess == true && currentUser != null)
                         {
                                                                         // store user profile in session
-                            SessionCreation.loggedInUser = currentUser
+                            SessionCreation.saveUser(this@LoginActivity, currentUser)
+
                                                                         // welcome the user
                             showMessage("Welcome ${currentUser.name}")
 

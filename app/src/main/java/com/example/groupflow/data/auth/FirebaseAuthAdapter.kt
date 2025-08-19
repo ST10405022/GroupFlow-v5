@@ -1,12 +1,16 @@
 package com.example.groupflow.data.auth
 
+import android.content.Context
+import android.se.omapi.Session
 import com.example.groupflow.core.domain.*
 import com.example.groupflow.core.service.AuthenticationService
+import com.example.groupflow.ui.auth.SessionCreation
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.tasks.await
 
-class FirebaseAuthAdapter : AuthenticationService {
+class FirebaseAuthAdapter(
+    private val context: Context) : AuthenticationService {
 
     private val auth = FirebaseAuth.getInstance()
     private val usersRef = FirebaseDatabase.getInstance().getReference("users")
@@ -35,6 +39,10 @@ class FirebaseAuthAdapter : AuthenticationService {
             }
 
             usersRef.child(uid).setValue(userObject).await()
+
+            // Save user session after registration
+            SessionCreation.saveUser(context, userObject)
+
             Result.success(uid)
         } catch (ex: Exception) {
             Result.failure(ex)
@@ -55,8 +63,29 @@ class FirebaseAuthAdapter : AuthenticationService {
         return try {
             val result = auth.signInWithEmailAndPassword(email, password).await()
             val uid = result.user?.uid ?: throw IllegalStateException("No UID")
-            Result.success(uid)
-        } catch (ex: Exception) {
+
+            //Save session and fetch user profile
+            val snapshot = usersRef.child(uid).get().await()
+            val role = snapshot.child("role").getValue(String::class.java)?.uppercase()
+            val user: User? = when (role){
+                "PATIENT" -> snapshot.getValue(Patient::class.java)
+                "EMPLOYEE" -> snapshot.getValue(Employee::class.java)
+                else -> null
+            }
+
+            if (user != null)
+            {
+                SessionCreation.saveUser(context, user)     // session persistence
+                Result.success(uid)
+            }
+            else
+            {
+                Result.failure(IllegalStateException("Unable to find user profile"))
+            }
+
+        }
+        catch (ex: Exception)
+        {
             Result.failure(ex)
         }
     }
@@ -69,6 +98,7 @@ class FirebaseAuthAdapter : AuthenticationService {
      */
     override fun logout() {
         auth.signOut()
+        SessionCreation.logout(context)     // Clear the active session
     }
 
     /**
@@ -100,6 +130,7 @@ class FirebaseAuthAdapter : AuthenticationService {
 
             // Check if the user object is not null before returning it
             if (user != null) {
+                SessionCreation.saveUser(context, user)     // maintain session synchronization
                 Result.success(user)
             } else {
                 Result.failure(IllegalStateException("User data not found or invalid"))
