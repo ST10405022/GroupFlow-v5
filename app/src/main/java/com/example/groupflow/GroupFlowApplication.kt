@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.firebase.FirebaseApp
 import android.util.Log
+import com.example.groupflow.data.AppDatabase
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.DatabaseError
 
@@ -17,6 +18,9 @@ class GroupFlowApplication : Application() {
         // Initialize Firebase
         FirebaseApp.initializeApp(this)
         Log.d("GroupFlowApplication", "Firebase initialized")
+
+        // initialize database with app context
+        AppDatabase.init(this)
 
         // Check Firebase Realtime Database connection
         val database = FirebaseDatabase.getInstance()
