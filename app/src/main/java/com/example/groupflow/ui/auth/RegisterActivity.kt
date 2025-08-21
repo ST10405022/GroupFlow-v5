@@ -25,7 +25,7 @@ class RegisterActivity : AppCompatActivity() {
                 email.isNotBlank() &&
                 Patterns.EMAIL_ADDRESS.matcher(email).matches() &&
                 password.length >= 8 &&
-                role.isNotBlank()
+                role.isNotBlank()   //PTA 012
     }
 
     private fun userRegistration(name: String, email: String, role: String, password: String)

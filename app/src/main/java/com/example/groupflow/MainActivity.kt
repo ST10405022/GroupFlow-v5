@@ -97,7 +97,7 @@ class MainActivity : AppCompatActivity() {
      * @param item Selected menu item.
      * @return True if the selection is handled, false otherwise.
      */
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {       // PTA 012
         return when (item.itemId) {
             R.id.menu_logout -> {
                                                     // log out authentication service

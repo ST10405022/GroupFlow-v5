@@ -38,7 +38,7 @@ class LoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            lifecycleScope.launch {
+            lifecycleScope.launch {     // PTA 012
                 try                                                     // check whether username exists
                 {
                     val loggedIn = AppDatabase.authService.login(emailAddress, password)
