@@ -29,7 +29,7 @@ class LoginActivity : AppCompatActivity() {
 
         // Handle login logic
         binding.buttonLogin.setOnClickListener {
-            // Login logic implementation
+                                                                        // Login logic implementation
             val emailAddress = binding.editTextEmail.text.toString().trim()    // input username
             val password = binding.editTextPassword.text.toString().trim()     // input password
 
