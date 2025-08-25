@@ -30,7 +30,7 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun userRegistration(name: String, email: String, role: String, password: String)
     {
-        lifecycleScope.launch {
+        lifecycleScope.launch {                                             // (KotlinLang, 2025)
             try
             {
                 val registered = AppDatabase.authService.register(email, password, name, role)
@@ -42,10 +42,10 @@ class RegisterActivity : AppCompatActivity() {
 
                     if (profileResult?.isSuccess == true && currentUser != null)
                     {
-                        SessionCreation.saveUser(this@RegisterActivity, currentUser) // welcome the user
+                        SessionCreation.saveUser(this@RegisterActivity, currentUser)       // welcome the user
                         showMessage("Welcome ${currentUser.name}")
 
-                        // redirect the user to their appropriate home screen
+                                                                                                    // redirect the user to their appropriate home screen
                         when (currentUser.role)
                         {
                             Role.PATIENT ->
@@ -73,7 +73,7 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    private fun showMessage(message: String){
+    private fun showMessage(message: String){                                                       // (Android Developers, 2025)
         Toast.makeText(this@RegisterActivity, message, Toast.LENGTH_SHORT).show()
     }
 
@@ -109,3 +109,8 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 }
+
+/**     Reference List
+ *          KotlinLang. 2025. Coroutines. [Online]. Available at: https://kotlinlang.org/docs/coroutines-overview.html# [Accessed on 25 August 2025]
+ *          Android Developers. 2025. Toast. [Online]. Available at: https://developer.android.com/reference/android/widget/Toast [Accessed on 25 August 2025]
+ *  **/

@@ -17,7 +17,7 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
 
-    private fun showMessage(message: String){
+    private fun showMessage(message: String){                       // (Android Developers, 2025)
         Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,29 +29,29 @@ class LoginActivity : AppCompatActivity() {
 
         // Handle login logic
         binding.buttonLogin.setOnClickListener {
-                                                                        // Login logic implementation
-            val emailAddress = binding.editTextEmail.text.toString().trim()    // input username
-            val password = binding.editTextPassword.text.toString().trim()     // input password
+                                                                                                    // Login logic implementation
+            val emailAddress = binding.editTextEmail.text.toString().trim()                             // input username
+            val password = binding.editTextPassword.text.toString().trim()                              // input password
 
-            if ((emailAddress == "") || (password == "")){                      // validate user input
+            if ((emailAddress == "") || (password == "")){                                              // validate user input
                 Toast.makeText(this,"Please enter email/password", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            lifecycleScope.launch {     // PTA 012
-                try                                                     // check whether username exists
+            lifecycleScope.launch {                                     // (KotlinLang, 2025)
+                try                                                                                     // check whether username exists
                 {
                     val loggedIn = AppDatabase.authService.login(emailAddress, password)
 
-                    if (loggedIn.isSuccess)                             // retrieve user profile
+                    if (loggedIn.isSuccess)                                                             // retrieve user profile
                     {
                         val profileResult = AppDatabase.authService.getCurrentUserProfile()
                         val currentUser = profileResult.getOrNull()
 
-                                                                        // successful retrieval of profile
+                                                                                                        // successful retrieval of profile
                         if (profileResult?.isSuccess == true && currentUser != null)
                         {
-                                                                        // store user profile in session
+                                                                                                        // store user profile in a session (Roy)
                             SessionCreation.saveUser(this@LoginActivity, currentUser)
 
                                                                         // welcome the user
@@ -69,12 +69,12 @@ class LoginActivity : AppCompatActivity() {
                             finish()
                         }
                         else
-                        {                            // show error message (unable to load profile)
+                        {                                                                               // show error message (unable to load profile)
                             showMessage("Failed to load user profile")
                         }
                     }
                     else
-                    {                                // show error message (unsuccessful login)
+                    {                                                                                   // show error message (unsuccessful login)
                         showMessage("Login failed")
                     }
                 }
@@ -98,3 +98,8 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 }
+
+/**     Reference List
+ *          KotlinLang. 2025. Coroutines. [Online]. Available at: https://kotlinlang.org/docs/coroutines-overview.html# [Accessed on 25 August 2025]
+ *          Android Developers. 2025. Toast. [Online]. Available at: https://developer.android.com/reference/android/widget/Toast [Accessed on 25 August 2025]
+ *  **/
