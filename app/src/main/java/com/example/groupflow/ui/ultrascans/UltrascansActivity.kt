@@ -18,7 +18,7 @@ class UltrascansActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUltrascansBinding
     private val scans = mutableListOf<UltrascanModel>()
     private lateinit var adapter: UltrascanAdapter
-    private var currentFileUrl: String? = null
+    var currentFileUrl: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

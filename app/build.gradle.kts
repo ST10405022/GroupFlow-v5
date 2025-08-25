@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.groupflow"
-    compileSdk = 35
+    compileSdk = 36
     viewBinding.isEnabled = true
 
     defaultConfig {
@@ -36,9 +36,6 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-    buildFeatures {
-        viewBinding = true
-    }
 
 }
 
@@ -56,6 +53,14 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+
+    // Unit testing
+    testImplementation(libs.junit)              // JUnit 5
+    testImplementation(libs.mockk)             // MockK
+    testImplementation(libs.coroutines.test)   // Coroutines test utilities
+    testImplementation(libs.truth)            // Truth assertions
+    androidTestImplementation(libs.androidx.espresso.intents)
+
     //
     implementation(libs.google.firebase.auth)
     implementation(libs.firebase.crashlytics.buildtools)
@@ -71,4 +76,8 @@ dependencies {
 
     implementation(libs.google.gson) // Gson
     implementation(libs.firebase.crashlytics) // Crashlytics
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
