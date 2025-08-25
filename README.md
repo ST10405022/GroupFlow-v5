@@ -4,7 +4,8 @@ GroupFlow is an Android application developed using **Clean Architecture** princ
 
 ---
 
-## 🧭 Sprint 4: Project Structure and Initial Implementation
+# Previous Sprint
+## Sprint 4: Project Structure and Initial Implementation
 **Duration:** 26th June – 8th July  
 **Goal:**  
 Set up the core infrastructure of the application, initialize the GitHub repository and CI/CD pipeline, and scaffold all necessary classes and layout files to support modular development of GroupFlow.
@@ -118,21 +119,12 @@ com.example.groupflow
 - ✅ Branch protection enabled on `main`
 - ✅ Modular build scripts for future Gradle improvements
 
----
-
-## 🚀 Future Enhancements (Post Sprint 6)
-
-- Secure local storage with `EncryptedSharedPreferences`
-- Offline Room caching support
-- Firebase Cloud Messaging (Push Notifications)
-- Multi-clinic support and scheduling for employees
-- Admin dashboard & analytics (TBD)
 
 ---
+# Current Sprint
+## Sprint 5: Core Feature Implementation ( Deadline: 25th August)
 
-## 🔜 Sprint 5: Core Feature Implementation ( Deadline: 18th August)
-
-### 🔧 Goals
+**Goal:**
 - Replace in-memory stubs with **Firebase Firestore / Firebase Auth** services
 - Implement service logic in `core.service` to connect data and UI
 - Build ViewModels to support state-based UI updates
@@ -140,16 +132,27 @@ com.example.groupflow
   - Patients → `MainActivity`
   - Employees → `EmployeeHubActivity`
 
-### 🔨 Planned Tasks
-- [ ] Implement appointment booking logic.
-- [ ] Implement scan upload functionality.
-- [ ] Implement review submission and listing.
-- [ ] Add role-based behavior (e.g., employees upload, patients view).
-- [ ] Hook up services to UI screens.
+### ✅ Objectives Achieved
+- 🔐 Authentication: Implemented FirebaseAuthAdapter with email/password registration, login, logout, and session persistence.
+- 👥 Role-Based Access: Patients → MainActivity; Employees → EmployeeHubActivity.
 
+- 🗄 Firebase Repositories:
+  - `FirebaseAppointmentRepo`
+  - `FirebaseScanRepo`
+  - `FirebaseReviewRepo`
+  - `FirebaseNotificationRepo`
+
+- 🕒 Date Handling: Added Converters for LocalDateTime ↔ Long storage.
+
+- 🌐 Lifecycle + Coroutines:
+  - Used `lifecycleScope.launch {}` in Activities to safely call Firebase suspend functions.
+  - Ensured data fetching and updates respect Activity lifecycle.
+- 💾 SessionManager:
+  - Stores userId, role, and persists across app restarts.
+  - Enforces access restrictions before navigating to Activities.
 ---
 
-## 🧪 Sprint 6: Integration and Testing (Deadline: 18th August)
+## 🔜 Sprint 6: Integration and Testing (Deadline: 18th August)
 
 ### 🎯 Goals
 - Full **Firebase integration** (Auth, Firestore, Storage)
@@ -158,18 +161,19 @@ com.example.groupflow
 - Finalize bottom navigation and toolbar behavior across roles
 
 ### 🔨 Planned Tasks
-- [ ] Replace in-memory repositories with real data sources (Firebase and Room caching).
-- [ ] Add ViewModel and LiveData for lifecycle-aware data handling.
+
 - [ ] Write unit tests for core services.
-- [ ] Conduct UI tests for major screens.
 - [ ] Finalize navigation flows and validate all role-based access.
+- [ ] Expand Firebase rules for notifications and clinic info.
+- [ ] Add UI Tests (Espresso) for login, register, and navigation flows.
+- [ ] CI/CD: Expand GitHub Actions to run tests automatically.
 
 ---
 
-
 ## 💡 Summaries
-
-Sprint 4 has successfully laid the foundation for a scalable and testable health app. The separation of concerns, modularization, and design decisions made here will support fast and safe progress in Sprints 5 and 6.
+- Sprint 4 established a clean, modular structure with mock repos.
+- Sprint 5 integrated Firebase, role-based navigation, and lifecycle-aware coroutines.
+- Sprint 6 will finalize integration, strengthen testing, and deliver production readiness.
 
 ---
 
