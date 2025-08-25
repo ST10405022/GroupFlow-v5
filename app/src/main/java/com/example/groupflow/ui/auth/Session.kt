@@ -7,7 +7,7 @@ import com.example.groupflow.core.domain.Role
 import com.example.groupflow.core.domain.User
 
 object SessionCreation {
-    private const val PREFS_NAME = "user_session"
+    private const val PREFERENCES_NAME = "user_session"
 
     private const val KEY_ID = "id"
     private const val KEY_NAME = "name"
@@ -18,9 +18,9 @@ object SessionCreation {
      * Saves the logged-in user's data into Shared Preferences
      * **/
 
-    fun saveUser(context: Context, user:User)       // PTA 012
+    fun saveUser(context: Context, user:User)
     {
-        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val prefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)    // (Android Developers, 2025)
         with(prefs.edit()){
             putString(KEY_ID, user.id)
             putString(KEY_NAME, user.name)
@@ -32,7 +32,7 @@ object SessionCreation {
 
     fun getUser(context: Context):User?
     {
-        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val prefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
         val id = prefs.getString(KEY_ID, null) ?: return null
         val name = prefs.getString(KEY_NAME, null) ?: return  null
         val email = prefs.getString(KEY_EMAIL, null) ?: return null
@@ -57,7 +57,11 @@ object SessionCreation {
      * **/
 
     fun logout(context: Context){
-        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val prefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
         prefs.edit().clear().apply()
     }
 }
+
+/**     Reference List
+ *          Android Developers. 2025. Save simple data with SharedPreferences. [Online]. Available at: https://developer.android.com/training/data-storage/shared-preferences [Accessed on 25 August 2025]
+ *  **/
