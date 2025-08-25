@@ -100,11 +100,11 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {       // PTA 012
         return when (item.itemId) {
             R.id.menu_logout -> {
-                                                    // log out authentication service
+                                                                        // log out authentication service
                 AppDatabase.authService
-                                                    // clear the active session
+                                                                        // clear the active session
                 SessionCreation.logout(this)
-                                                    // display logout message
+                                                                        // display logout message
                 showMessage("Logged out")
                 val intent = Intent(this, LoginActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
