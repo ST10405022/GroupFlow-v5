@@ -167,7 +167,7 @@ com.example.groupflow
 ---
 
 
-## 💡 Summary
+## 💡 Summaries
 
 Sprint 4 has successfully laid the foundation for a scalable and testable health app. The separation of concerns, modularization, and design decisions made here will support fast and safe progress in Sprints 5 and 6.
 
