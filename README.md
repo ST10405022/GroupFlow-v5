@@ -2,13 +2,15 @@
 
 GroupFlow is an Android application developed using **Clean Architecture** principles and **role-based access control** to serve both **Patients** and **Employees** in a clinical environment. The system enables users to manage appointments, view ultrasound scans, submit reviews, and access clinic information.
 
+Referenced principles include Clean Architecture, which emphasises separation into domain, data, and UI layers (Martin, 2018), and role-based access control using Firebase Auth and Firestore Security Rules (Firebase, 2025; TheNewGenCoder, 2023).
+
 ---
 
 # Previous Sprint
 ## Sprint 4: Project Structure and Initial Implementation
 **Duration:** 26th June – 8th July  
 **Goal:**  
-Set up the core infrastructure of the application, initialize the GitHub repository and CI/CD pipeline, and scaffold all necessary classes and layout files to support modular development of GroupFlow.
+Set up the core infrastructure of the application, initialize the GitHub repository and CI/CD pipeline, and scaffold all necessary classes and layout files to support modular development of GroupFlow (Martin, 2018).
 
 ### ✅ Objectives Achieved
 - 📁 Defined and implemented a **Clean Architecture structure**:
@@ -108,6 +110,8 @@ com.example.groupflow
 | Patient     | `MainActivity.kt`        | Cannot upload scans                      |
 | Employee    | `EmployeeHubActivity.kt` | Cannot request appointments              |
 
+The access control model follows RBAC, where Firebase Auth and Firestore Security Rules enforce permissions based on user roles (Firebase, 2025; TheNewGenCoder, 2023).
+
 ---
 
 ## ⚙️ CI/CD
@@ -145,7 +149,7 @@ com.example.groupflow
 - 🕒 Date Handling: Added Converters for LocalDateTime ↔ Long storage.
 
 - 🌐 Lifecycle + Coroutines:
-  - Used `lifecycleScope.launch {}` in Activities to safely call Firebase suspend functions.
+  - Used `lifecycleScope.launch {}` in Activities to safely call Firebase suspend functions (Google, 2025).
   - Ensured data fetching and updates respect Activity lifecycle.
 - 💾 SessionManager:
   - Stores userId, role, and persists across app restarts.
@@ -189,6 +193,14 @@ com.example.groupflow
 - **Lead Back-End Developer (API & Integration):** *[Karabo Latakgomo]*
 - **Requirements, Testing & QA:** *[Sandile Ndukula]*
 
+---
+
+## 📚 References
+
+- Firebase. 2025. *Role-based access with Firebase Auth and Firestore*. Available at: [https://firebase.google.com/docs/firestore/solutions/role-based-access](https://firebase.google.com/docs/firestore/solutions/role-based-access) (Accessed: 4 August 2025).  
+- Google. 2025. *Kotlin coroutines on Android*. Available at: [https://developer.android.com/kotlin/coroutines](https://developer.android.com/kotlin/coroutines) (Accessed: 4 August 2025).  
+- Martin, R.C. 2018. *Clean architecture: A craftsman’s guide to software structure and design*. Upper Saddle River, NJ: Prentice Hall.  
+- TheNewGenCoder. 2023. *Firebase authentication with role-based access control (RBAC)*. Medium. Available at: [https://medium.com/@theNewGenCoder/firebase-authentication-with-role-based-access-control-rbac-e2eee803283b](https://medium.com/@theNewGenCoder/firebase-authentication-with-role-based-access-control-rbac-e2eee803283b) (Accessed: 4 August 2025).  
 ---
 
 _© 2025 GroupFlow Team — Built with passion and purpose._
