@@ -48,18 +48,18 @@ jobs:
       #  run: ./gradlew lintDebug
 
       # Step 7: Run unit tests (e.g., for domain logic or view models)
-      #- name: Run unit tests
-      #  run: ./gradlew testDebugUnitTest
+      - name: Run unit tests
+        run: ./gradlew testDebugUnitTest
 
       # Step 8: Run Android tests
-      #- name: Start emulator
-      #  uses: ReactiveCircus/android-emulator-runner@v2
-      #  with:
-      #    api-level: 34
-      #    target: default
-      #    arch: x86_64
-      #    profile: Nexus 6
-      #    script: ./gradlew connectedDebugAndroidTest
+      - name: Start emulator
+        uses: ReactiveCircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: default
+          arch: x86_64
+          profile: Nexus 6
+          script: ./gradlew connectedDebugAndroidTest
 
       # Step 9: Upload the generated APK as a build artifact so it can be downloaded
       #- name: Upload APK artifact
