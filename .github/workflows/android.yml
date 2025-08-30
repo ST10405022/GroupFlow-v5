@@ -129,9 +129,6 @@ jobs:
           disable-animations: true
           script: ./gradlew connectedDebugAndroidTest
 
-    env:
-      ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL: 60
-
     # Step 6: Prevent emulator from being killed too early
     env:
       ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL: 60
