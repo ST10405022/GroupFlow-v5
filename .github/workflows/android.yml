@@ -79,7 +79,7 @@ jobs:
   # ======================================================
   ui-tests:
     name: Run UI Tests on Emulator
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     needs: unit-tests   # ✅ Ensures job runs ONLY if unit-tests pass
 
     steps:
@@ -94,13 +94,7 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      # Step 3: Install required emulator libs
-      - name: Install AVD dependencies
-        run: |
-          sudo apt-get update -y
-          sudo apt-get install -y libpulse-dev libglu1-mesa
-
-      # Step 4: Restore Gradle cache for faster builds
+      # Step 3: Restore Gradle cache for faster builds
       - name: Cache Gradle
         uses: actions/cache@v3
         with:
@@ -111,11 +105,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # Step 5: Make Gradle wrapper executable
+      # Step 4: Make Gradle wrapper executable
       - name: Grant execute permission for Gradlew
         run: chmod +x ./gradlew
 
-      # Step 6: Start Android Emulator and run Espresso tests
+      # Step 5: Start Android Emulator and run Espresso tests
       - name: Run UI Tests on Emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -127,6 +121,6 @@ jobs:
           disable-animations: true        # Improves emulator performance in CI
           script: ./gradlew connectedDebugAndroidTest  # Run instrumented tests
 
-    # Step 7: Prevent emulator from being killed too early
+    # Step 6: Prevent emulator from being killed too early
     env:
       ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL: 60
