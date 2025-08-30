@@ -1,30 +1,100 @@
-# Name of the workflow as it appears in the GitHub Actions UI
+# ======================================================
+# GitHub Actions Workflow for Android CI
+# ======================================================
+# This workflow builds the app, runs unit tests,
+# and runs instrumented UI tests on an Android Emulator.
+# ------------------------------------------------------
+
 name: Android CI
 
-# Triggers the workflow on push or pull request events to the specified branches
+# ------------------------------------------------------
+# Trigger workflow on pushes & pull requests to main
+# ------------------------------------------------------
 on:
   push:
-    branches: [ "main" ]  # Runs when code is pushed to main
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]  # Also runs when a PR targets main
+    branches: [ "main" ]
 
 jobs:
-  build-test:  # A single job that builds and tests the project
+  # ======================================================
+  # JOB 1: Unit Tests
+  # ------------------------------------------------------
+  # Runs fast JVM tests (no emulator needed).
+  # Verifies business logic, ViewModels, services, etc.
+  # ======================================================
+  unit-tests:
+    name: Run Unit Tests
     runs-on: ubuntu-latest  # GitHub-hosted Ubuntu runner
 
     steps:
-      # Step 1: Checkout the code from the repository
+      # Step 1: Pull code from GitHub repo
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Set up Java Development Kit (JDK) version 17, required for Android builds
+      # Step 2: Set up Java Development Kit (JDK 17 required by Android Gradle plugin)
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: temurin  # Recommended OpenJDK distribution
-          java-version: 17       # Matches Android Gradle plugin requirements
+          distribution: temurin   # Recommended OpenJDK
+          java-version: 17
 
       # Step 3: Cache Gradle dependencies to speed up builds
+      - name: Cache Gradle
+        uses: actions/cache@v3
+        with:
+          # Cache Gradle's local files
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          # Unique key per OS + Gradle files hash
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # Step 4: Make Gradle wrapper executable (fixes "permission denied" errors)
+      - name: Grant execute permission for Gradlew
+        run: chmod +x ./gradlew
+
+      # Step 5: Compile + build APK in debug mode
+      - name: Build project
+        run: ./gradlew assembleDebug
+
+      # Step 6: Run JVM unit tests (fast tests, no emulator needed)
+      - name: Run unit tests
+        run: ./gradlew testDebugUnitTest
+
+      # Optional: Upload APK as artifact so testers can download it
+      #- name: Upload APK artifact
+      #  uses: actions/upload-artifact@v3
+      #  with:
+      #    name: debug-apk
+      #    path: app/build/outputs/apk/debug/app-debug.apk
+
+  # ======================================================
+  # JOB 2: UI Tests (Instrumented Tests)
+  # ------------------------------------------------------
+  # Runs Espresso / instrumented tests on Android emulator.
+  # Only runs if unit tests succeed.
+  # ======================================================
+  ui-tests:
+    name: Run UI Tests on Emulator
+    runs-on: ubuntu-latest
+    needs: unit-tests   # ✅ Ensures job runs ONLY if unit-tests pass
+
+    steps:
+      # Step 1: Checkout source code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up JDK 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      # Step 3: Restore Gradle cache for faster builds
       - name: Cache Gradle
         uses: actions/cache@v3
         with:
@@ -34,36 +104,23 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-            
-      # Step 4: Grant execute permission to the Gradle wrapper script
+
+      # Step 4: Make Gradle wrapper executable
       - name: Grant execute permission for Gradlew
         run: chmod +x ./gradlew
 
-      # Step 5: Build the project in debug mode (produces APK)
-      - name: Build project
-        run: ./gradlew assembleDebug
-
-      # Step 6: Run Android lint checks to catch coding errors and styling issues
-      #- name: Run lint
-      #  run: ./gradlew lintDebug
-
-      # Step 7: Run unit tests (e.g., for domain logic or view models)
-      - name: Run unit tests
-        run: ./gradlew testDebugUnitTest
-
-      # Step 8: Run Android tests
-      - name: Start emulator
-        uses: ReactiveCircus/android-emulator-runner@v2
+      # Step 5: Start Android Emulator and run Espresso tests
+      - name: Run UI Tests on Emulator
+        uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 34
-          target: default
-          arch: x86_64
-          profile: Nexus 6
-          script: ./gradlew connectedDebugAndroidTest
+          api-level: 30                  # Android API level (Android 11)
+          target: google_apis            # System image with Google Play/Services
+          arch: x86_64                   # Emulator architecture
+          profile: pixel_5                # Device profile
+          emulator-options: -no-snapshot -noaudio -no-boot-anim -camera-back none
+          disable-animations: true        # Improves emulator performance in CI
+          script: ./gradlew connectedDebugAndroidTest  # Run instrumented tests
 
-      # Step 9: Upload the generated APK as a build artifact so it can be downloaded
-      #- name: Upload APK artifact
-      #  uses: actions/upload-artifact@v3
-      #  with:
-      #    name: debug-apk  # Artifact label
-      #    path: app/build/outputs/apk/debug/app-debug.apk  # Path to the debug APK
+    # Step 6: Prevent emulator from being killed too early
+    env:
+      ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL: 60
