@@ -115,7 +115,7 @@ jobs:
         with:
           api-level: 30                  # Android API level (Android 11)
           target: google_apis            # System image with Google Play/Services
-          arch: x86_64                   # Emulator architecture
+          arch: arm64-v8a                # Emulator architecture
           profile: pixel_5                # Device profile
           emulator-options: -no-snapshot -noaudio -no-boot-anim -camera-back none
           disable-animations: true        # Improves emulator performance in CI
