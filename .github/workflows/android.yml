@@ -79,7 +79,7 @@ jobs:
   # ======================================================
   ui-tests:
     name: Run UI Tests on Emulator
-    runs-on: macos-latest
+    runs-on: macos-13
     needs: unit-tests   # ✅ Ensures job runs ONLY if unit-tests pass
 
     steps:
@@ -113,9 +113,9 @@ jobs:
       - name: Run UI Tests on Emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30                  # Android API level (Android 11)
-          target: google_apis            # System image with Google Play/Services
-          arch: arm64-v8a                # Emulator architecture
+          api-level: 30                   # Android API level (Android 11)
+          target: google_apis             # System image with Google Play/Services
+          arch: x86_64                    # Emulator architecture
           profile: pixel_5                # Device profile
           emulator-options: -no-snapshot -noaudio -no-boot-anim -camera-back none
           disable-animations: true        # Improves emulator performance in CI
