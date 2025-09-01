@@ -12,7 +12,14 @@ import com.example.groupflow.ui.ultrascans.UploadUltrascanActivity
 import com.google.firebase.database.*
 import android.util.Log
 import android.view.View
+import com.example.groupflow.MainActivity
+import com.example.groupflow.core.domain.User
+import com.example.groupflow.core.domain.Role
+import com.example.groupflow.ui.NotificationsActivity
+import com.example.groupflow.ui.appointments.AppointmentsActivity
 import com.example.groupflow.ui.auth.LoginActivity
+import com.example.groupflow.ui.auth.SessionCreation
+import com.example.groupflow.ui.hubs.EmployeeHubActivity
 import com.example.groupflow.ui.profile.UserProfileActivity
 
 class PatientSelectionActivity : AppCompatActivity() {
@@ -20,25 +27,44 @@ class PatientSelectionActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPatientSelectionBinding
     private val patients = mutableListOf<UserModel>()
     private lateinit var adapter: PatientAdapter
+    private lateinit var currentUser: User
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPatientSelectionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Retrieve the logged-in user
+        currentUser = SessionCreation.getUser(this) ?: run {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
+
         // Setup RecyclerView
         binding.recyclerPatients.layoutManager = LinearLayoutManager(this)
-        adapter = PatientAdapter(patients) { selectedPatient ->
-            // When patient clicked, open UploadUltrascanActivity with patientId
-            val intent = Intent(this, UploadUltrascanActivity::class.java)
-            intent.putExtra("patientId", selectedPatient.id)
-            startActivity(intent)
+        if (currentUser.role == Role.EMPLOYEE) {
+            adapter = PatientAdapter(patients) { selectedPatient ->
+                // When patient clicked, open UploadUltrascanActivity with patientId
+                val intent = Intent(this, UploadUltrascanActivity::class.java)
+                intent.putExtra("patientId", selectedPatient.id)
+                Log.d("PatientSelectionActivity",
+                    "Starting UploadUltrascanActivity with patientId: ${selectedPatient.id}")
+                startActivity(intent)
+            }
+        } else {
+            SessionCreation.logout(this)
+            Toast.makeText(this, "Access denied", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, LoginActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            })
         }
         binding.recyclerPatients.adapter = adapter
 
         binding.topAppBarPatients.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
+
         binding.topAppBarPatients.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_profile -> {
@@ -46,11 +72,38 @@ class PatientSelectionActivity : AppCompatActivity() {
                     true
                 }
                 R.id.menu_logout -> {
+                    SessionCreation.logout(this)
                     Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this, LoginActivity::class.java)
-                    intent.flags =
-                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
+                    startActivity(Intent(this, LoginActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    })
+                    true
+                }
+                else -> false
+            }
+        }
+
+        // Bottom navigation click listeners
+        binding.bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    when (currentUser.role) {
+                        Role.EMPLOYEE -> startActivity(Intent(this, EmployeeHubActivity::class.java))
+                        Role.PATIENT -> startActivity(Intent(this, MainActivity::class.java))
+                    }
+                    true
+                }
+                R.id.nav_appointments -> { // Notifications menu item
+                    startActivity(Intent(this, AppointmentsActivity::class.java))
+                    true
+                }
+                R.id.nav_profile -> { // Doctor Info menu item
+                    Toast.makeText(this, "Already viewing doctor info",
+                        Toast.LENGTH_SHORT).show()
+                    true
+                }
+                R.id.nav_notifications -> { // Notifications menu item
+                    startActivity(Intent(this, NotificationsActivity::class.java))
                     true
                 }
                 else -> false

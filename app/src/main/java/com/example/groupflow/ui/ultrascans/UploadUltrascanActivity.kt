@@ -4,25 +4,36 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.example.groupflow.MainActivity
 import com.example.groupflow.R
+import com.example.groupflow.core.domain.Role
+import com.example.groupflow.core.domain.User
 import com.example.groupflow.databinding.ActivityUploadUltrascanBinding
 import com.example.groupflow.ui.NotificationsActivity
 import com.example.groupflow.ui.appointments.AppointmentsActivity
 import com.example.groupflow.ui.auth.LoginActivity
+import com.example.groupflow.ui.auth.SessionCreation
+import com.example.groupflow.ui.hubs.EmployeeHubActivity
 import com.example.groupflow.ui.info.DoctorInfoActivity
 import com.example.groupflow.ui.profile.UserProfileActivity
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import java.util.*
+import java.text.SimpleDateFormat
 
 class UploadUltrascanActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUploadUltrascanBinding
     private var fileUri: Uri? = null
-    private lateinit var patientId: String
+    private var patientId: String? = null
+    private var currentUser: User? = null
 
     // File picker
     private val pickFile =
@@ -31,7 +42,7 @@ class UploadUltrascanActivity : AppCompatActivity() {
                 fileUri = result.data?.data
                 fileUri?.let {
                     Toast.makeText(this, "Selected: $it", Toast.LENGTH_SHORT).show()
-                    uploadFileToFirebase(it)
+                    showPreview(it) // Show preview and approve button before uploading
                 }
             }
         }
@@ -42,7 +53,18 @@ class UploadUltrascanActivity : AppCompatActivity() {
         binding = ActivityUploadUltrascanBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        patientId = intent.getStringExtra("PATIENT_ID") ?: ""
+        currentUser = SessionCreation.getUser(this)
+        patientId = intent.getStringExtra("patientId") ?: ""
+        Log.d("UploadUltrascanActivity", "Received patientId: $patientId")
+
+        // Check for patientId
+        if (patientId.isNullOrEmpty()) {
+            Toast.makeText(this, "No patient selected.", Toast.LENGTH_SHORT).show()
+            Log.e("UploadUltrascanActivity", "Patient ID is null or empty")
+            finish()
+            return
+        }
+        Log.d("UploadUltrascanActivity", "Patient ID: $patientId")
 
         // Toolbar back icon
         binding.topAppBarUpload.setNavigationOnClickListener {
@@ -58,6 +80,7 @@ class UploadUltrascanActivity : AppCompatActivity() {
                 }
                 R.id.menu_logout -> {
                     Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
+                    SessionCreation.logout(this)
                     val intent = Intent(this, LoginActivity::class.java)
                     intent.flags =
                         Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -68,11 +91,14 @@ class UploadUltrascanActivity : AppCompatActivity() {
             }
         }
 
-        // 📌 Select Image/PDF button
+        // Select file button
         binding.uploadImageButton.setOnClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
-                type = "*/*" // allow all
-                putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/jpeg", "image/png", "application/pdf"))
+                type = "*/*"
+                putExtra(
+                    Intent.EXTRA_MIME_TYPES,
+                    arrayOf("image/jpeg", "image/png", "application/pdf")
+                )
             }
             pickFile.launch(intent)
         }
@@ -81,7 +107,11 @@ class UploadUltrascanActivity : AppCompatActivity() {
         binding.bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
-                    startActivity(Intent(this, MainActivity::class.java))
+                    when (currentUser?.role) {
+                        Role.EMPLOYEE -> startActivity(Intent(this, EmployeeHubActivity::class.java))
+                        Role.PATIENT -> startActivity(Intent(this, MainActivity::class.java))
+                        else -> Toast.makeText(this, "Unknown role", Toast.LENGTH_SHORT).show()
+                    }
                     true
                 }
                 R.id.nav_appointments -> {
@@ -110,7 +140,7 @@ class UploadUltrascanActivity : AppCompatActivity() {
                 return@isEmployee
             }
 
-            if (patientId.isEmpty()) {
+            if (patientId?.isEmpty() == true) {
                 Toast.makeText(this, "No patient selected.", Toast.LENGTH_SHORT).show()
                 return@isEmployee
             }
@@ -132,20 +162,60 @@ class UploadUltrascanActivity : AppCompatActivity() {
 
     // 💾 Save file metadata in Realtime Database
     private fun saveFileMetadata(fileUrl: String) {
-        val dbRef = FirebaseDatabase.getInstance().getReference("ultrascans")
-        val uploadId = dbRef.push().key ?: UUID.randomUUID().toString()
+        val ultrascansRef = FirebaseDatabase.getInstance().getReference("ultrascans")
+        val uploadId = ultrascansRef.push().key ?: UUID.randomUUID().toString()
         val uploaderId = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid ?: ""
-        val patientId = patientId
+        val description = "Uploaded by ${currentUser?.name} on ${System.currentTimeMillis()}"
 
-        val scanData = mapOf(
-            "id" to uploadId,
-            "fileUrl" to fileUrl,
-            "uploadedAt" to System.currentTimeMillis(),
-            "uploaderId" to uploaderId,
-            "patientId" to patientId
-        )
+        // Fetch patient name
+        val patientRef = FirebaseDatabase.getInstance().getReference("users").child(patientId!!)
+        patientRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val patientName = snapshot.child("name").getValue(String::class.java) ?: "UnknownPatient"
+                Log.d("UploadUltrascanActivity", "Patient name: $patientName")
 
-        dbRef.child(uploadId).setValue(scanData)
+                val patientNameSafe = patientName.replace(" ", "_") // replaces all spaces with underscores
+
+                // Generate timestamped file name
+                val sdf = SimpleDateFormat("ddMMyyyyHHmmss", Locale.getDefault())
+                val timestamp = sdf.format(Date())
+                val fileName = "${patientNameSafe}_UltraScan_$timestamp"
+                Log.d("UploadUltrascanActivity", "Generated file name: $fileName")
+
+                val scanData = mapOf(
+                    "id" to uploadId,
+                    "fileUrl" to fileUrl,
+                    "uploadedAt" to System.currentTimeMillis(),
+                    "uploaderId" to uploaderId,
+                    "patientId" to patientId!!,
+                    "description" to description,
+                    "fileName" to fileName
+                )
+
+                ultrascansRef.child(uploadId).setValue(scanData)
+                    .addOnSuccessListener {
+                        Log.d("UploadUltrascanActivity", "Scan metadata saved successfully")
+                        Toast.makeText(this@UploadUltrascanActivity, "File uploaded and approved!", Toast.LENGTH_SHORT).show()
+
+                        // Redirect back to hub
+                        when (currentUser?.role) {
+                            Role.EMPLOYEE -> startActivity(Intent(this@UploadUltrascanActivity, EmployeeHubActivity::class.java))
+                            Role.PATIENT -> startActivity(Intent(this@UploadUltrascanActivity, MainActivity::class.java))
+                            else -> Log.w("UploadUltrascanActivity", "Unknown role, staying on page")
+                        }
+                        finish()
+                    }
+                    .addOnFailureListener {
+                        Log.e("UploadUltrascanActivity", "Failed to save scan metadata: ${it.message}")
+                        Toast.makeText(this@UploadUltrascanActivity, "Failed to save scan metadata", Toast.LENGTH_SHORT).show()
+                    }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("UploadUltrascanActivity", "Failed to get patient name: ${error.message}")
+                Toast.makeText(this@UploadUltrascanActivity, "Failed to retrieve patient info", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     // 🔐 Check if the user is an employee
@@ -158,6 +228,31 @@ class UploadUltrascanActivity : AppCompatActivity() {
             onResult(role == "EMPLOYEE")
         }.addOnFailureListener {
             onResult(false)
+        }
+    }
+
+    // Show preview and approve button
+    private fun showPreview(uri: Uri) {
+        binding.previewLayout.visibility = View.VISIBLE
+        binding.approveUploadButton.visibility = View.VISIBLE
+
+        val mimeType = contentResolver.getType(uri) ?: ""
+        Log.d("UploadUltrascanActivity", "Selected file MIME type: $mimeType")
+
+        if (mimeType.startsWith("image/")) {
+            binding.previewImage.visibility = View.VISIBLE
+            binding.previewImage.setImageURI(uri)
+            binding.previewFileName.visibility = View.GONE
+        } else {
+            binding.previewImage.visibility = View.GONE
+            binding.previewFileName.visibility = View.VISIBLE
+            binding.previewFileName.text = uri.lastPathSegment ?: "Unknown file"
+        }
+
+        binding.approveUploadButton.setOnClickListener {
+            Log.d("UploadUltrascanActivity", "Approve button clicked, uploading file...")
+            Toast.makeText(this, "Uploading file...", Toast.LENGTH_SHORT).show()
+            uploadFileToFirebase(uri)
         }
     }
 }
