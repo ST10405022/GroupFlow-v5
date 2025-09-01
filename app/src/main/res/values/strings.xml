@@ -111,4 +111,9 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="scan_file">Scan File</string>
+    <string name="patient_email_com">patient@email.com</string>
+    <string name="patient_name">Patient Name</string>
+    <string name="patients_recyclerview">Patients RecyclerView</string>
+    <string name="no_patients_found">No patients found</string>
 </resources>

@@ -14,7 +14,8 @@ import com.example.groupflow.models.UltrascanModel
 
 class UltrascanAdapter(
     private val context: Context,
-    private val scans: List<UltrascanModel>
+    private val scans: List<UltrascanModel>,
+    private val onScanSelected: (String) -> Unit // Callback to send selected scan's URL
 ) : RecyclerView.Adapter<UltrascanAdapter.UltrascanViewHolder>() {
 
     inner class UltrascanViewHolder(val binding: ItemUltrascanBinding) :
@@ -30,13 +31,21 @@ class UltrascanAdapter(
         val scan = scans[position]
         holder.binding.fileNameTextView.text = "Scan ${position + 1}"
 
+        // Notify activity of current selection
+        holder.itemView.setOnClickListener {
+            onScanSelected(scan.fileUrl)
+        }
+
         // Download button
         holder.binding.btnDownload.setOnClickListener {
             val request = DownloadManager.Request(Uri.parse(scan.fileUrl))
                 .setTitle("Ultrascan File")
                 .setDescription("Downloading ultrasound scan")
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "ultrascan_${position + 1}.pdf")
+                .setDestinationInExternalPublicDir(
+                    Environment.DIRECTORY_DOWNLOADS,
+                    "ultrascan_${position + 1}.pdf"
+                )
 
             val dm = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             dm.enqueue(request)
@@ -47,7 +56,10 @@ class UltrascanAdapter(
         // View button
         holder.binding.btnView.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW).apply {
-                setDataAndType(Uri.parse(scan.fileUrl), if (scan.fileUrl.endsWith(".pdf")) "application/pdf" else "image/*")
+                setDataAndType(
+                    Uri.parse(scan.fileUrl),
+                    if (scan.fileUrl.endsWith(".pdf")) "application/pdf" else "image/*"
+                )
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
             }
 

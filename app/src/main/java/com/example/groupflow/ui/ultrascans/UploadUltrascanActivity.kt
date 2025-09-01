@@ -22,6 +22,7 @@ import java.util.*
 class UploadUltrascanActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUploadUltrascanBinding
     private var fileUri: Uri? = null
+    private lateinit var patientId: String
 
     // File picker
     private val pickFile =
@@ -40,6 +41,8 @@ class UploadUltrascanActivity : AppCompatActivity() {
 
         binding = ActivityUploadUltrascanBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        patientId = intent.getStringExtra("PATIENT_ID") ?: ""
 
         // Toolbar back icon
         binding.topAppBarUpload.setNavigationOnClickListener {
@@ -100,18 +103,30 @@ class UploadUltrascanActivity : AppCompatActivity() {
 
     // 🔥 Upload file to Firebase Storage
     private fun uploadFileToFirebase(uri: Uri) {
-        val storageRef = FirebaseStorage.getInstance().reference
-        val fileName = "ultrascans/${UUID.randomUUID()}"
-        val fileRef = storageRef.child(fileName)
-
-        val uploadTask = fileRef.putFile(uri)
-        uploadTask.addOnSuccessListener {
-            fileRef.downloadUrl.addOnSuccessListener { downloadUrl ->
-                saveFileMetadata(downloadUrl.toString())
-                Toast.makeText(this, "File uploaded!", Toast.LENGTH_SHORT).show()
+        isEmployee { allowed ->
+            if (!allowed) {
+                Toast.makeText(this, "Only employees can upload ultrascans.", Toast.LENGTH_SHORT)
+                    .show()
+                return@isEmployee
             }
-        }.addOnFailureListener {
-            Toast.makeText(this, "Upload failed: ${it.message}", Toast.LENGTH_SHORT).show()
+
+            if (patientId.isEmpty()) {
+                Toast.makeText(this, "No patient selected.", Toast.LENGTH_SHORT).show()
+                return@isEmployee
+            }
+            val storageRef = FirebaseStorage.getInstance().reference
+            val fileName = "ultrascans/${UUID.randomUUID()}"
+            val fileRef = storageRef.child(fileName)
+
+            val uploadTask = fileRef.putFile(uri)
+            uploadTask.addOnSuccessListener {
+                fileRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                    saveFileMetadata(downloadUrl.toString())
+                    Toast.makeText(this, "File uploaded!", Toast.LENGTH_SHORT).show()
+                }
+            }.addOnFailureListener {
+                Toast.makeText(this, "Upload failed: ${it.message}", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -119,13 +134,30 @@ class UploadUltrascanActivity : AppCompatActivity() {
     private fun saveFileMetadata(fileUrl: String) {
         val dbRef = FirebaseDatabase.getInstance().getReference("ultrascans")
         val uploadId = dbRef.push().key ?: UUID.randomUUID().toString()
+        val uploaderId = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid ?: ""
+        val patientId = patientId
 
         val scanData = mapOf(
             "id" to uploadId,
             "fileUrl" to fileUrl,
-            "uploadedAt" to System.currentTimeMillis()
+            "uploadedAt" to System.currentTimeMillis(),
+            "uploaderId" to uploaderId,
+            "patientId" to patientId
         )
 
         dbRef.child(uploadId).setValue(scanData)
+    }
+
+    // 🔐 Check if the user is an employee
+    private fun isEmployee(onResult: (Boolean) -> Unit) {
+        val uid = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val dbRef = FirebaseDatabase.getInstance().getReference("users").child(uid).child("role")
+
+        dbRef.get().addOnSuccessListener { snapshot ->
+            val role = snapshot.getValue(String::class.java)
+            onResult(role == "EMPLOYEE")
+        }.addOnFailureListener {
+            onResult(false)
+        }
     }
 }

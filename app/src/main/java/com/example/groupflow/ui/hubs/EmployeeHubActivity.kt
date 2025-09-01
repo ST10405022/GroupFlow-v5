@@ -10,8 +10,8 @@ import com.example.groupflow.ui.NotificationsActivity
 import com.example.groupflow.ui.appointments.AppointmentsActivity
 import com.example.groupflow.ui.auth.LoginActivity
 import com.example.groupflow.ui.info.DoctorInfoActivity
+import com.example.groupflow.ui.patients.PatientSelectionActivity
 import com.example.groupflow.ui.profile.UserProfileActivity
-import com.example.groupflow.ui.ultrascans.UploadUltrascanActivity
 
 class EmployeeHubActivity : AppCompatActivity() {
 
@@ -26,7 +26,7 @@ class EmployeeHubActivity : AppCompatActivity() {
 
         // Example navigation for employees
         binding.buttonUploadUltrascan.setOnClickListener {
-            startActivity(Intent(this, UploadUltrascanActivity::class.java))
+            startActivity(Intent(this, PatientSelectionActivity::class.java))
         }
 
         // Back button behavior
