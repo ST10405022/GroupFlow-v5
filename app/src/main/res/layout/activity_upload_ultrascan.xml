@@ -21,18 +21,55 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <Button
+    <!-- Select File Button -->
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/uploadImageButton"
-        android:text="@string/select_image"
-        app:layout_constraintTop_toBottomOf="@+id/topAppBarUpload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/upload_ultrascan_image"
+        app:layout_constraintTop_toBottomOf="@id/topAppBarUpload"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Preview Layout -->
+    <LinearLayout
+        android:id="@+id/previewLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"/>
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/uploadImageButton"
+        app:layout_constraintBottom_toTopOf="@id/bottomNav"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.5" >
+
+        <ImageView
+            android:id="@+id/previewImage"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            android:contentDescription="@string/ultrascan_preview" />
+
+        <TextView
+            android:id="@+id/previewFileName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="@string/no_file_selected" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/approveUploadButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/approve_upload"
+            android:visibility="gone" />
+    </LinearLayout>
 
     <!-- Bottom Navigation -->
-
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
         android:layout_width="0dp"
@@ -43,5 +80,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

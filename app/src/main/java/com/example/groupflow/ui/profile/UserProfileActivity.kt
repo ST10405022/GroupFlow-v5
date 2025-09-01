@@ -6,10 +6,15 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.groupflow.MainActivity
 import com.example.groupflow.R
+import com.example.groupflow.core.domain.Employee
+import com.example.groupflow.core.domain.Patient
+import com.example.groupflow.core.domain.Role
+import com.example.groupflow.core.domain.User
 import com.example.groupflow.databinding.ActivityUserProfileBinding
 import com.example.groupflow.ui.NotificationsActivity
 import com.example.groupflow.ui.appointments.AppointmentsActivity
 import com.example.groupflow.ui.auth.LoginActivity
+import com.example.groupflow.ui.auth.SessionCreation
 import com.example.groupflow.ui.hubs.EmployeeHubActivity
 import com.example.groupflow.ui.info.DoctorInfoActivity
 import com.google.android.material.navigation.NavigationBarView
@@ -17,12 +22,7 @@ import com.google.android.material.navigation.NavigationBarView
 class UserProfileActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityUserProfileBinding
-
-    // Simulated user data
-    // ( will be replaced with real user session or ViewModel in later sprints)
-    private val userName = "John Doe"
-    private val userEmail = "john@example.com"
-    private val userRole = "Patient" // or "Employee"
+    private var currentUser: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,12 +30,25 @@ class UserProfileActivity : AppCompatActivity() {
         binding = ActivityUserProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Get logged-in user from session
+        currentUser = SessionCreation.getUser(this)
+
+        if (currentUser == null) {
+            // If no user session found, force logout
+            Toast.makeText(this, "Session expired. Please log in again.", Toast.LENGTH_SHORT).show()
+            SessionCreation.logout(this)
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            return
+        }
+
         // Toolbar back icon
         binding.topAppBarProfile.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        // Toolbar menu (e.g., profile settings)
+        // Toolbar menu actions
         binding.topAppBarProfile.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_profile -> {
@@ -44,7 +57,7 @@ class UserProfileActivity : AppCompatActivity() {
                 }
                 R.id.menu_logout -> {
                     Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
-
+                    SessionCreation.logout(this)
                     val intent = Intent(this, LoginActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
@@ -54,10 +67,10 @@ class UserProfileActivity : AppCompatActivity() {
             }
         }
 
-        // Set user data to TextViews
-        binding.textUserName.text = userName
-        binding.textEmail.text = userEmail
-        binding.textUserRole.text = userRole
+        // Display user data
+        binding.textUserName.text = currentUser!!.name
+        binding.textEmail.text = currentUser!!.email
+        binding.textUserRole.text = currentUser!!.role.name // "PATIENT" or "EMPLOYEE"
 
         // Bottom navigation actions
         binding.bottomNav.setOnItemSelectedListener(navListener)
@@ -67,11 +80,10 @@ class UserProfileActivity : AppCompatActivity() {
     private val navListener = NavigationBarView.OnItemSelectedListener { item ->
         when (item.itemId) {
             R.id.nav_home -> {
-                // Redirect to role-based hub
-                if (userRole.equals("Employee", ignoreCase = true)) {
-                    startActivity(Intent(this, EmployeeHubActivity::class.java))
-                } else {
-                    startActivity(Intent(this, MainActivity::class.java))
+                when (currentUser?.role) {
+                    Role.EMPLOYEE -> startActivity(Intent(this, EmployeeHubActivity::class.java))
+                    Role.PATIENT -> startActivity(Intent(this, MainActivity::class.java))
+                    else -> Toast.makeText(this, "Unknown role", Toast.LENGTH_SHORT).show()
                 }
                 true
             }

@@ -116,4 +116,9 @@
     <string name="patient_name">Patient Name</string>
     <string name="patients_recyclerview">Patients RecyclerView</string>
     <string name="no_patients_found">No patients found</string>
+    <string name="no_scans_available">No Scans Available</string>
+    <string name="file_name">File Name</string>
+    <string name="approve_upload">Approve Upload</string>
+    <string name="no_file_selected">No File Selected.</string>
+    <string name="ultrascan_preview">Preview</string>
 </resources>

@@ -8,10 +8,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.groupflow.MainActivity
 import com.example.groupflow.R
 import com.example.groupflow.core.domain.Review
+import com.example.groupflow.core.domain.Role
+import com.example.groupflow.core.domain.User
 import com.example.groupflow.databinding.ActivityReviewsBinding
 import com.example.groupflow.ui.NotificationsActivity
 import com.example.groupflow.ui.appointments.AppointmentsActivity
 import com.example.groupflow.ui.auth.LoginActivity
+import com.example.groupflow.ui.auth.SessionCreation
+import com.example.groupflow.ui.hubs.EmployeeHubActivity
 import com.example.groupflow.ui.info.DoctorInfoActivity
 import com.example.groupflow.ui.profile.UserProfileActivity
 import java.time.LocalDateTime
@@ -19,12 +23,15 @@ import java.time.LocalDateTime
 class ReviewsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityReviewsBinding
+    private var currentUser: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityReviewsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        currentUser = SessionCreation.getUser(this)
 
         // Add Review button click listener
         binding.fabAddReview.setOnClickListener {
@@ -44,6 +51,7 @@ class ReviewsActivity : AppCompatActivity() {
 
                 R.id.menu_logout -> {
                     Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
+                    SessionCreation.logout(this)
                     val intent = Intent(this, LoginActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
@@ -56,8 +64,12 @@ class ReviewsActivity : AppCompatActivity() {
         // Bottom navigation click listeners
         binding.bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_home -> { // Home menu item
-                    startActivity(Intent(this, MainActivity::class.java))
+                R.id.nav_home -> {
+                    when (currentUser?.role) {
+                        Role.EMPLOYEE -> startActivity(Intent(this, EmployeeHubActivity::class.java))
+                        Role.PATIENT -> startActivity(Intent(this, MainActivity::class.java))
+                        else -> Toast.makeText(this, "Unknown role", Toast.LENGTH_SHORT).show()
+                    }
                     true
                 }
                 R.id.nav_appointments -> { // Notifications menu item

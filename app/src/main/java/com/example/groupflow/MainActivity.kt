@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.groupflow.core.domain.User
 import com.example.groupflow.data.AppDatabase
 import com.example.groupflow.databinding.ActivityMainBinding
 import com.example.groupflow.ui.appointments.AppointmentsActivity
@@ -17,10 +18,12 @@ import com.example.groupflow.ui.info.DoctorInfoActivity
 import com.example.groupflow.ui.profile.UserProfileActivity
 import com.example.groupflow.ui.reviews.ReviewsActivity
 import com.example.groupflow.ui.ultrascans.UltrascansActivity
+import com.example.groupflow.core.domain.Role
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var currentUser: User
 
     private fun showMessage(message: String){
                                                     // show message function declaration
@@ -33,11 +36,22 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Retrieve the logged-in user from SessionCreation
+        currentUser = SessionCreation.getUser(this) ?: run {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
+
         setSupportActionBar(binding.topAppBar)
 
         // Card click listeners for Appointments
         binding.cardAppointments.setOnClickListener {
-            startActivity(Intent(this, AppointmentsActivity::class.java))
+            if (currentUser.role == Role.PATIENT) {
+                startActivity(Intent(this, AppointmentsActivity::class.java))
+            } else {
+                Toast.makeText(this, "Access denied", Toast.LENGTH_SHORT).show()
+            }
         }
 
         // Card click listeners for Ultrascans
@@ -65,8 +79,12 @@ class MainActivity : AppCompatActivity() {
                     showMessage("Already viewing home")
                     true
                 } // Already on home screen
-                R.id.nav_appointments -> { // Notifications menu item
-                    startActivity(Intent(this, AppointmentsActivity::class.java))
+                R.id.nav_appointments -> {
+                    if (currentUser.role == Role.PATIENT) { // Appointments menu item
+                        startActivity(Intent(this, AppointmentsActivity::class.java))
+                    } else {
+                        Toast.makeText(this, "Access coming soon", Toast.LENGTH_SHORT).show()
+                    }
                     true
                 }
                 R.id.nav_profile -> { // Doctor Info menu item
