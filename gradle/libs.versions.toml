@@ -21,6 +21,8 @@ gSon = "2.11.0"
 firebashCrashlytics = "20.0.0"
 firebaseCrashlyticsBuildtools = "3.0.6"
 lifecycle = "2.9.2"
+mockitoCore = "5.12.0"
+mockitoKotlin = "5.3.1"
 roomCommonJvm = "2.7.2"
 firebaseStorage = "22.0.0"
 espressoIntents = "3.7.0"
@@ -55,6 +57,8 @@ bumptech-glide = { group = "com.github.bumptech.glide", name = "glide", version.
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage"}
 androidx-room-common-jvm = { group = "androidx.room", name = "room-common-jvm", version.ref = "roomCommonJvm" }
 androidx-espresso-intents = { group = "androidx.test.espresso", name = "espresso-intents", version.ref = "espressoIntents" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutinesTest" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }

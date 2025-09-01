@@ -76,7 +76,11 @@ dependencies {
 
     implementation(libs.google.gson) // Gson
     implementation(libs.firebase.crashlytics) // Crashlytics
+    testImplementation(libs.mockito.core)// Mockito for Java mocking
+    testImplementation(libs.mockito.kotlin)// Mockito for Kotlin (extension helpers like mock(), whenever(), etc.)
+
 }
+
 
 tasks.withType<Test> {
     useJUnitPlatform()
