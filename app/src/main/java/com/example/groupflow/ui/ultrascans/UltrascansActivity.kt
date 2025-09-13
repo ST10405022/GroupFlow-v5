@@ -4,11 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.groupflow.MainActivity
 import com.example.groupflow.databinding.ActivityUltrascansBinding
 import com.example.groupflow.models.UltrascanModel
@@ -17,7 +15,7 @@ import com.google.firebase.database.*
 import com.example.groupflow.R
 import com.example.groupflow.core.domain.Role
 import com.example.groupflow.core.domain.User
-import com.example.groupflow.ui.NotificationsActivity
+import com.example.groupflow.ui.notifications.NotificationsActivity
 import com.example.groupflow.ui.appointments.AppointmentsActivity
 import com.example.groupflow.ui.auth.LoginActivity
 import com.example.groupflow.ui.hubs.EmployeeHubActivity

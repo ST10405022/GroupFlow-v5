@@ -10,7 +10,7 @@ import com.example.groupflow.core.domain.DoctorInfo
 import com.example.groupflow.core.domain.User
 import com.example.groupflow.core.domain.Role
 import com.example.groupflow.databinding.ActivityDoctorInfoBinding
-import com.example.groupflow.ui.NotificationsActivity
+import com.example.groupflow.ui.notifications.NotificationsActivity
 import com.example.groupflow.ui.appointments.AppointmentsActivity
 import com.example.groupflow.ui.auth.LoginActivity
 import com.example.groupflow.ui.auth.SessionCreation

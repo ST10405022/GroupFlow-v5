@@ -121,4 +121,7 @@
     <string name="approve_upload">Approve Upload</string>
     <string name="no_file_selected">No File Selected.</string>
     <string name="ultrascan_preview">Preview</string>
+    <string name="_12_12_2025_14_30">12/12/2025 14:30</string>
+    <string name="notification_message">Notification message</string>
+    <string name="_01_09_2025_19_00">01/09/2025 19:00</string>
 </resources>

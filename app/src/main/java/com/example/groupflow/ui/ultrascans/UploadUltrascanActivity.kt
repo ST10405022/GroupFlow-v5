@@ -11,23 +11,30 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.example.groupflow.MainActivity
 import com.example.groupflow.R
+import com.example.groupflow.core.domain.Notification
 import com.example.groupflow.core.domain.Role
 import com.example.groupflow.core.domain.User
+import com.example.groupflow.data.notification.FirebaseNotificationRepo
 import com.example.groupflow.databinding.ActivityUploadUltrascanBinding
-import com.example.groupflow.ui.NotificationsActivity
+import com.example.groupflow.models.NotificationModel
+import com.example.groupflow.ui.notifications.NotificationsActivity
 import com.example.groupflow.ui.appointments.AppointmentsActivity
 import com.example.groupflow.ui.auth.LoginActivity
 import com.example.groupflow.ui.auth.SessionCreation
 import com.example.groupflow.ui.hubs.EmployeeHubActivity
 import com.example.groupflow.ui.info.DoctorInfoActivity
+import com.example.groupflow.ui.patients.PatientSelectionActivity
 import com.example.groupflow.ui.profile.UserProfileActivity
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.launch
 import java.util.*
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 class UploadUltrascanActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUploadUltrascanBinding
@@ -160,7 +167,7 @@ class UploadUltrascanActivity : AppCompatActivity() {
         }
     }
 
-    // 💾 Save file metadata in Realtime Database
+    // 💾 Save file metadata in Realtime Database and send notification
     private fun saveFileMetadata(fileUrl: String) {
         val ultrascansRef = FirebaseDatabase.getInstance().getReference("ultrascans")
         val uploadId = ultrascansRef.push().key ?: UUID.randomUUID().toString()
@@ -168,54 +175,58 @@ class UploadUltrascanActivity : AppCompatActivity() {
         val description = "Uploaded by ${currentUser?.name} on ${System.currentTimeMillis()}"
 
         // Fetch patient name
-        val patientRef = FirebaseDatabase.getInstance().getReference("users").child(patientId!!)
-        patientRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val patientName = snapshot.child("name").getValue(String::class.java) ?: "UnknownPatient"
-                Log.d("UploadUltrascanActivity", "Patient name: $patientName")
+        val patientRef = FirebaseDatabase.getInstance().getReference("users")
+        patientRef.orderByChild("role").equalTo("PATIENT").get().addOnSuccessListener { snapshot ->
+            var patientName = "UnknownPatient"
 
-                val patientNameSafe = patientName.replace(" ", "_") // replaces all spaces with underscores
-
-                // Generate timestamped file name
-                val sdf = SimpleDateFormat("ddMMyyyyHHmmss", Locale.getDefault())
-                val timestamp = sdf.format(Date())
-                val fileName = "${patientNameSafe}_UltraScan_$timestamp"
-                Log.d("UploadUltrascanActivity", "Generated file name: $fileName")
-
-                val scanData = mapOf(
-                    "id" to uploadId,
-                    "fileUrl" to fileUrl,
-                    "uploadedAt" to System.currentTimeMillis(),
-                    "uploaderId" to uploaderId,
-                    "patientId" to patientId!!,
-                    "description" to description,
-                    "fileName" to fileName
-                )
-
-                ultrascansRef.child(uploadId).setValue(scanData)
-                    .addOnSuccessListener {
-                        Log.d("UploadUltrascanActivity", "Scan metadata saved successfully")
-                        Toast.makeText(this@UploadUltrascanActivity, "File uploaded and approved!", Toast.LENGTH_SHORT).show()
-
-                        // Redirect back to hub
-                        when (currentUser?.role) {
-                            Role.EMPLOYEE -> startActivity(Intent(this@UploadUltrascanActivity, EmployeeHubActivity::class.java))
-                            Role.PATIENT -> startActivity(Intent(this@UploadUltrascanActivity, MainActivity::class.java))
-                            else -> Log.w("UploadUltrascanActivity", "Unknown role, staying on page")
-                        }
-                        finish()
-                    }
-                    .addOnFailureListener {
-                        Log.e("UploadUltrascanActivity", "Failed to save scan metadata: ${it.message}")
-                        Toast.makeText(this@UploadUltrascanActivity, "Failed to save scan metadata", Toast.LENGTH_SHORT).show()
-                    }
+            // Find the patient with matching patientId
+            for (child in snapshot.children) {
+                if (child.child("id").getValue(String::class.java) == patientId) {
+                    patientName = child.child("name").getValue(String::class.java) ?: "UnknownPatient"
+                    break
+                }
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("UploadUltrascanActivity", "Failed to get patient name: ${error.message}")
-                Toast.makeText(this@UploadUltrascanActivity, "Failed to retrieve patient info", Toast.LENGTH_SHORT).show()
-            }
-        })
+            val patientNameSafe = patientName.replace(" ", "_")
+
+            // Generate timestamped file name
+            val sdf = SimpleDateFormat("ddMMyyyyHHmmss", Locale.getDefault())
+            val timestamp = sdf.format(Date())
+            val fileName = "${patientNameSafe}_UltraScan_$timestamp"
+
+            // Save metadata in Realtime Database
+            val scanData = mapOf(
+                "id" to uploadId,
+                "fileUrl" to fileUrl,
+                "uploadedAt" to System.currentTimeMillis(),
+                "uploaderId" to uploaderId,
+                "patientId" to patientId!!,
+                "description" to description,
+                "fileName" to fileName
+            )
+
+            ultrascansRef.child(uploadId).setValue(scanData)
+                .addOnSuccessListener {
+                    Log.d("UploadUltrascanActivity", "Scan metadata saved successfully")
+                    Toast.makeText(this@UploadUltrascanActivity, "File uploaded and approved!", Toast.LENGTH_SHORT).show()
+
+                    // Redirect back to hub
+                    when (currentUser?.role) {
+                        Role.EMPLOYEE -> startActivity(Intent(this@UploadUltrascanActivity, PatientSelectionActivity::class.java))
+                        Role.PATIENT -> startActivity(Intent(this@UploadUltrascanActivity, MainActivity::class.java))
+                        else -> Log.w("UploadUltrascanActivity", "Unknown role, staying on page")
+                    }
+                    finish()
+                }
+                .addOnFailureListener {
+                    Log.e("UploadUltrascanActivity", "Failed to save scan metadata: ${it.message}")
+                    Toast.makeText(this@UploadUltrascanActivity, "Failed to save scan metadata", Toast.LENGTH_SHORT).show()
+                }
+
+        }.addOnFailureListener {
+            Log.e("UploadUltrascanActivity", "Failed to get patient info: ${it.message}")
+            Toast.makeText(this@UploadUltrascanActivity, "Failed to retrieve patient info", Toast.LENGTH_SHORT).show()
+        }
     }
 
     // 🔐 Check if the user is an employee

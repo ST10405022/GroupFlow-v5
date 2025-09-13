@@ -2,6 +2,7 @@ package com.example.groupflow.data.notification
 
 import com.example.groupflow.core.domain.Notification
 import com.example.groupflow.core.service.NotificationService
+import com.example.groupflow.models.NotificationModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -16,18 +17,13 @@ class FirebaseNotificationRepo : NotificationService {
     private val zone = ZoneId.systemDefault()
 
     /**
-     * Sends a push notification to a specific user.
-     * @param userId The ID of the user to send the notification to.
-     * @param notification The notification to send.
-     * @return A [Result] containing the result of the operation.
-     * @throws Exception if the operation fails.
-     * @see Notification
+     * Send a notification to a specific user (patient).
      */
     override suspend fun pushNotificationForUser(userId: String, notification: Notification): Result<Unit> {
         return try {
-            val key = db.push().key ?: throw IllegalStateException("No key")
-            val map = toMap(notification.copy(id = key, recipientId = userId))
-            db.child(key).setValue(map).await()
+            val key = db.push().key ?: throw IllegalStateException("No key generated")
+            val model = notification.toModel(key, userId)
+            db.child(key).setValue(model).await()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -35,53 +31,51 @@ class FirebaseNotificationRepo : NotificationService {
     }
 
     /**
-     * Marks a notification as read.
-     * @param userId The ID of the user who received the notification.
-     * @return A [Result] containing the result of the operation.
-     * @throws Exception if the operation fails.
-     * @see Notification
+     * Fetch notifications for a specific user (patient) only.
+     *
      */
     override suspend fun getNotificationsForUser(userId: String): Result<List<Notification>> {
         return try {
-            val snap = db.orderByChild("recipientId").equalTo(userId).get().await()
-            val list = snap.children.mapNotNull { snapshotToNotification(it) }
-            Result.success(list)
+            val snapshot = db.orderByChild("recipientId").equalTo(userId).get().await()
+            val list = snapshot.children.mapNotNull { it.toDomain() }
+            Result.success(list.sortedByDescending { it.timestamp }) // most recent first
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
     /**
-     * Converts a [Notification] object to a map.
-     * @param n The [Notification] object to convert.
-     * @return A map containing the converted data.
+     * Convert domain Notification -> NotificationModel for Firebase storage
+     * @param key Firebase key for the notification
+     * @param recipientId User ID of the recipient
+     * @return NotificationModel for Firebase storage
+     * @see NotificationModel
      * @see Notification
      */
-    private fun toMap(n: Notification): Map<String, Any?> {
-        val millis = n.timestamp.atZone(zone).toInstant().toEpochMilli()
-        return mapOf(
-            "id" to n.id,
-            "message" to n.message,
-            "recipientId" to n.recipientId,
-            "timestamp" to millis,
-            "read" to n.read
+    private fun Notification.toModel(key: String, recipientId: String): NotificationModel {
+        val millis = this.timestamp.atZone(zone).toInstant().toEpochMilli()
+        return NotificationModel(
+            id = key,
+            message = this.message,
+            recipientId = recipientId,
+            timestamp = millis,
+            read = this.read,
+            type = this.type,
+            relatedId = this.relatedId
         )
     }
 
     /**
-     * Converts a Firebase [DataSnapshot] to a [Notification] object.
-     * @param snapshot The Firebase [DataSnapshot] to convert.
-     * @return The converted [Notification] object, or null if the conversion fails.
-     * @throws Exception if the conversion fails.
-     * @see Notification
+     * Convert Firebase snapshot -> domain Notification
+     *
      */
-    private fun snapshotToNotification(snapshot: DataSnapshot): Notification? {
-        val id = snapshot.child("id").getValue(String::class.java) ?: snapshot.key ?: return null
-        val message = snapshot.child("message").getValue(String::class.java) ?: ""
-        val recipientId = snapshot.child("recipientId").getValue(String::class.java) ?: ""
-        val millis = snapshot.child("timestamp").getValue(Long::class.java) ?: 0L
+    private fun DataSnapshot.toDomain(): Notification? {
+        val id = child("id").getValue(String::class.java) ?: key ?: return null
+        val message = child("message").getValue(String::class.java) ?: ""
+        val recipientId = child("recipientId").getValue(String::class.java) ?: ""
+        val millis = child("timestamp").getValue(Long::class.java) ?: 0L
         val timestamp = LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), zone)
-        val read = snapshot.child("read").getValue(Boolean::class.java) ?: false
+        val read = child("read").getValue(Boolean::class.java) ?: false
         return Notification(id, message, recipientId, timestamp, read)
     }
 }

@@ -7,5 +7,7 @@ data class Notification(
     val message: String = "",
     val recipientId: String = "",
     val timestamp: LocalDateTime = LocalDateTime.now(),
-    val read: Boolean = false
+    val read: Boolean = false,
+    val type: String? = null,
+    val relatedId: String? = null
 )

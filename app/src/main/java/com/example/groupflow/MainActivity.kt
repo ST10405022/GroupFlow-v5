@@ -11,7 +11,7 @@ import com.example.groupflow.data.AppDatabase
 import com.example.groupflow.databinding.ActivityMainBinding
 import com.example.groupflow.ui.appointments.AppointmentsActivity
 import com.example.groupflow.ui.info.ClinicInfoActivity
-import com.example.groupflow.ui.NotificationsActivity
+import com.example.groupflow.ui.notifications.NotificationsActivity
 import com.example.groupflow.ui.auth.LoginActivity
 import com.example.groupflow.ui.auth.SessionCreation
 import com.example.groupflow.ui.info.DoctorInfoActivity

@@ -2,6 +2,7 @@ package com.example.groupflow.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +14,9 @@ import androidx.lifecycle.lifecycleScope
 import com.example.groupflow.core.domain.Role
 import com.example.groupflow.data.AppDatabase
 import com.example.groupflow.ui.hubs.EmployeeHubActivity
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.launch
 
 class RegisterActivity : AppCompatActivity() {
@@ -40,35 +44,81 @@ class RegisterActivity : AppCompatActivity() {
                     val profileResult = AppDatabase.authService.getCurrentUserProfile()
                     val currentUser = profileResult.getOrNull()
 
-                    if (profileResult?.isSuccess == true && currentUser != null)
+                    if (profileResult.isSuccess && currentUser != null)
                     {
-                        SessionCreation.saveUser(this@RegisterActivity, currentUser)       // welcome the user
+                        SessionCreation.saveUser(this@RegisterActivity, currentUser)
+                        Log.d("RegisterActivity", "User registered and profile loaded successfully")
+                        // welcome the user
                         showMessage("Welcome ${currentUser.name}")
 
-                                                                                                    // redirect the user to their appropriate home screen
+                        // update the user's FCM token
+                        updateUserFcmToken(currentUser.id)
+
+                        // redirect the user to their appropriate home screen
                         when (currentUser.role)
                         {
-                            Role.PATIENT ->
-                                startActivity(Intent(this@RegisterActivity, MainActivity::class.java))
-
-                            Role.EMPLOYEE ->
-                                startActivity(Intent(this@RegisterActivity, EmployeeHubActivity::class.java))
+                            Role.PATIENT -> {
+                                Log.d("RegisterActivity", "User is a patient")
+                                startActivity(
+                                    Intent(
+                                        this@RegisterActivity,
+                                        MainActivity::class.java
+                                    )
+                                )
+                            }
+                            Role.EMPLOYEE -> {
+                                Log.d("RegisterActivity", "User is an employee")
+                                startActivity(
+                                    Intent(
+                                        this@RegisterActivity,
+                                        EmployeeHubActivity::class.java
+                                    )
+                                )
+                            }
                         }
                         finish()
                     }
                     else
-                    {                            // show error message (unable to load profile)
+                    {
+                        // show error message (unable to load profile)
                         showMessage("Failed to register and load user profile")
+                        Log.e("RegisterActivity", "Failed to load user profile")
                     }
                 }
                 else
-                {                                // show error message (unsuccessful login)
-                    showMessage("User registration failed")
+                {
+                    val exception = registered.exceptionOrNull()
+                    if (exception != null)
+                    {
+                        // check if the exception message contains the specific error message
+                        if (exception.message?.contains("email address is already in use",
+                                ignoreCase = true) == true) {
+                            // show error message (email already in use)
+                            showMessage("This email address is already in use. Please log in or use a different email.")
+                            Log.e("RegisterActivity", "Email address is already in use")
+                        } else {
+                            // show error message (user registration failed)
+                            showMessage("User registration failed: ${exception.message}")
+                        }
+                        Log.e("RegisterActivity", "User registration failed", exception)
+                    }
+                    else { // show error message (unsuccessful login)
+                        showMessage("User registration failed")
+                        Log.e("RegisterActivity", "User registration failed")
+                    }
+
                 }
             }
             catch (e: Exception)
             {
                 showMessage("Unable to register user profile: ${e.message}")
+                Log.e("RegisterActivity", "Unable to register user profile", e)
+
+                if (e is FirebaseAuthUserCollisionException)
+                {
+                    showMessage("This email address is already in use. Please log in or use a different email.")
+                    Log.e("RegisterActivity", "Email address is already in use")
+                }
             }
         }
     }
@@ -106,6 +156,20 @@ class RegisterActivity : AppCompatActivity() {
 
         binding.registerTitle.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
+        }
+    }
+
+    fun updateUserFcmToken(uid: String) {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val token = task.result
+                FirebaseDatabase.getInstance().getReference("users/$uid/fcmToken")
+                    .setValue(token)
+                    .addOnSuccessListener { Log.d("FCM", "Token updated for user $uid") }
+                    .addOnFailureListener { Log.e("FCM", "Failed to update token: ${it.message}") }
+            } else {
+                Log.e("FCM", "Failed to get FCM token", task.exception)
+            }
         }
     }
 }

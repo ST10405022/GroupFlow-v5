@@ -34,3 +34,6 @@ google-services.json
 
 # Mac OS specific
 .DS_Store
+
+.gradle.nosync/
+.idea.nosync/

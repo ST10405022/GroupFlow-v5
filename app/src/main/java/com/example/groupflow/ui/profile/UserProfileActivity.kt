@@ -6,12 +6,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.groupflow.MainActivity
 import com.example.groupflow.R
-import com.example.groupflow.core.domain.Employee
-import com.example.groupflow.core.domain.Patient
 import com.example.groupflow.core.domain.Role
 import com.example.groupflow.core.domain.User
 import com.example.groupflow.databinding.ActivityUserProfileBinding
-import com.example.groupflow.ui.NotificationsActivity
+import com.example.groupflow.ui.notifications.NotificationsActivity
 import com.example.groupflow.ui.appointments.AppointmentsActivity
 import com.example.groupflow.ui.auth.LoginActivity
 import com.example.groupflow.ui.auth.SessionCreation

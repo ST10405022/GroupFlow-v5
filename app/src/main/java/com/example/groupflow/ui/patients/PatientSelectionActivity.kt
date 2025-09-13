@@ -15,7 +15,7 @@ import android.view.View
 import com.example.groupflow.MainActivity
 import com.example.groupflow.core.domain.User
 import com.example.groupflow.core.domain.Role
-import com.example.groupflow.ui.NotificationsActivity
+import com.example.groupflow.ui.notifications.NotificationsActivity
 import com.example.groupflow.ui.appointments.AppointmentsActivity
 import com.example.groupflow.ui.auth.LoginActivity
 import com.example.groupflow.ui.auth.SessionCreation
@@ -128,7 +128,7 @@ class PatientSelectionActivity : AppCompatActivity() {
                         // No patients found; show empty state text and hide RecyclerView
                         binding.textNoPatients.visibility = View.VISIBLE
                         binding.recyclerPatients.visibility = View.GONE
-                        android.util.Log.d("PatientSelection", "No patients found in database")
+                        Log.d("PatientSelection", "No patients found in database")
                         return
                     }
 
@@ -140,7 +140,7 @@ class PatientSelectionActivity : AppCompatActivity() {
                             // Add the patient to the list
                             patients.add(user)
                             // Log loaded patient information for debugging
-                            android.util.Log.d(
+                            Log.d(
                                 "PatientSelection",
                                 "Loaded patient: ${user.name}, ${user.email}"
                             )
@@ -174,6 +174,7 @@ class PatientSelectionActivity : AppCompatActivity() {
                     // Show error message in empty state TextView
                     binding.textNoPatients.visibility = View.VISIBLE
                     binding.textNoPatients.text = "Failed to load patients"
+
                     // Hide the RecyclerView since loading failed
                     binding.recyclerPatients.visibility = View.GONE
                     // Display a Toast message for immediate user feedback
@@ -182,8 +183,11 @@ class PatientSelectionActivity : AppCompatActivity() {
                         "Failed to load patients: ${error.message}",
                         Toast.LENGTH_SHORT
                     ).show()
+                    // Log the error for debugging
+                    Log.e("PatientSelectionActivity", "Failed to load patients: ${error.message}")
+
                     // Log the Firebase error for debugging
-                    android.util.Log.e("PatientSelection", "Firebase error: ${error.message}")
+                    Log.e("PatientSelection", "Firebase error: ${error.message}")
                 }
             })
     }
