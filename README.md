@@ -26,7 +26,7 @@ Set up the core infrastructure of the application, initialize the GitHub reposit
 
 ---
 
-## 📦 Project Structure (Sprint 4)
+## 📦 Project Structure (Sprint 7)
 
 ```plaintext
 com.example.groupflow
