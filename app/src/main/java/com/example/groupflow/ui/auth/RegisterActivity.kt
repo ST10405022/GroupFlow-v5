@@ -25,6 +25,13 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun validInput(name: String, email: String, role: String, password: String): Boolean
     {
+        val validRole = try{
+            Role.valueOf(role.uppercase())
+            true
+        }
+        catch (e: IllegalArgumentException){
+            false
+        }
         return  name.isNotBlank() &&
                 email.isNotBlank() &&
                 Patterns.EMAIL_ADDRESS.matcher(email).matches() &&

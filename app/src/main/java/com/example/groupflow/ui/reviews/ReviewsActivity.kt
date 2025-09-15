@@ -9,6 +9,7 @@ import com.example.groupflow.MainActivity
 import com.example.groupflow.R
 import com.example.groupflow.core.domain.Role
 import com.example.groupflow.core.domain.User
+import com.example.groupflow.data.review.FirebaseReviewRepo
 import com.example.groupflow.databinding.ActivityReviewsBinding
 import com.example.groupflow.ui.notifications.NotificationsActivity
 import com.example.groupflow.ui.appointments.AppointmentsActivity
@@ -17,14 +18,40 @@ import com.example.groupflow.ui.auth.SessionCreation
 import com.example.groupflow.ui.hubs.EmployeeHubActivity
 import com.example.groupflow.ui.info.DoctorInfoActivity
 import com.example.groupflow.ui.profile.UserProfileActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ReviewsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityReviewsBinding
     private var currentUser: User? = null
 
+    private fun showMessage(message: String){                       // (Android Developers, 2025)
+        Toast.makeText(this@ReviewsActivity, message, Toast.LENGTH_SHORT).show()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // set the clinic id
+        var clinicId = intent.getStringExtra("CLINIC_ID") ?: return
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val result = FirebaseReviewRepo().fetchReviewsForClinic(clinicId)
+            withContext(Dispatchers.Main){
+                if (result.isSuccess){
+                    val reviews = result.getOrDefault(emptyList())
+                    val adapter = ReviewAdapter(reviews)
+                    binding.recyclerReviews.adapter = adapter
+                }
+                else
+                {
+                    showMessage("Error loading reviews")
+                }
+            }
+        }
 
         binding = ActivityReviewsBinding.inflate(layoutInflater)
         setContentView(binding.root)
