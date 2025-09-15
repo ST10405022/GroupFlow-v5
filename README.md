@@ -124,9 +124,6 @@ The access control model follows RBAC, where Firebase Auth and Firestore Securit
 ## ✅ Sprint 7: Secondary Feature Implementation (Deadline: 15th September)
 ### 🎯 Goals
 - Implement **Push Notifications** using Firebase Cloud Messaging (FCM) with role-based targeting (Patients vs Employees).
-- Implement **Appointments** functionality:
-  - Patients can request appointments.
-  - Employees can view and manage appointments.
 - Implement **Reviews** functionality:
   - Patients can submit reviews (`LeaveReviewActivity`).
   - Both Patients and Employees can view reviews (`ReviewsActivity` with `ReviewAdapter`).
@@ -137,11 +134,6 @@ The access control model follows RBAC, where Firebase Auth and Firestore Securit
   - Integrated Firebase Cloud Messaging in MyFirebaseMessagingService.
   - Configured `index.js` Cloud Function to send notifications per patient/employee role.
   - Patients receive scan upload notifications; Employees receive appointment requests.
-
-- 📅 **Appointments Module**:
-  - Added `AppointmentsActivity` to display upcoming appointments.
-  - Added `RequestAppointmentActivity` where patients can submit appointment requests.
-  - Appointment data stored and synced via Firebase Realtime Database (RTDB).
 
 - 📝 **Reviews Module**:
   - Added `LeaveReviewActivity` for patients to write reviews.
