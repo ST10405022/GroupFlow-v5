@@ -2,6 +2,7 @@ package com.example.groupflow.ui.reviews
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.groupflow.MainActivity
@@ -57,25 +58,30 @@ class LeaveReviewActivity : AppCompatActivity() {
 
             val review = Review(
                 patientId = currentUser?.id,
-                clinicId = null,
+                clinicId = "",
                 rating = rating,
                 comment = comment,
                 createdDate = LocalDateTime.now()
             )
 
+            Log.d("LeaveReviewActivity", "Review to be submitted: $review")
             CoroutineScope(Dispatchers.IO).launch {
                 val result = FirebaseReviewRepo().addReview(review)
                 withContext(Dispatchers.Main){
                     if (result.isSuccess){
                         showMessage("Review submitted")
+                        Log.d("LeaveReviewActivity", "Review submitted: $review")
                         finish()
                     }
                     else
                     {
                         showMessage("Failed to submit review")
+                        Log.d("LeaveReviewActivity", "Failed to submit review: ${result.exceptionOrNull()}")
                     }
                 }
             }
+
+            startActivity(Intent(this, ReviewsActivity::class.java))
         }
 
         // Top app bar menu item click listener

@@ -1,5 +1,6 @@
 package com.example.groupflow.data.review
 
+import android.util.Log
 import com.example.groupflow.core.domain.Review
 import com.example.groupflow.core.service.ReviewService
 import com.google.firebase.database.DataSnapshot
@@ -27,6 +28,7 @@ class FirebaseReviewRepo : ReviewService {
             val key = review.id.ifBlank { db.push().key!! }
             db.child(key).setValue(toMap(review.copy(id = key))).await()
             Result.success(Unit)
+
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -42,6 +44,23 @@ class FirebaseReviewRepo : ReviewService {
     override suspend fun fetchReviewsForClinic(clinicId: String): Result<List<Review>> {
         return try {
             val snapshot = db.orderByChild("clinicId").equalTo(clinicId).get().await()
+            val list = snapshot.children.mapNotNull { snapshotToReview(it) }
+            Result.success(list)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /**
+     * Fetches all reviews from the database.
+     * @return A [Result] containing the list of all reviews or an error.
+     * @throws Exception if the operation fails.
+     * @see Review
+     */
+    suspend fun fetchAllReviews(): Result<List<Review>> {
+        return try {
+            // Simply get all data at the "reviews" reference without any filtering
+            val snapshot = db.get().await()
             val list = snapshot.children.mapNotNull { snapshotToReview(it) }
             Result.success(list)
         } catch (e: Exception) {

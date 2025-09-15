@@ -28,7 +28,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         sendNotification(title, message, clickAction)
     }
 
-
     private fun sendNotification(title: String, message: String, clickAction: String?) {
         val channelId = "groupflow_notifications"
         val notificationId = System.currentTimeMillis().toInt()

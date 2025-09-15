@@ -2,6 +2,7 @@ package com.example.groupflow.ui.reviews
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,6 +23,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import androidx.lifecycle.lifecycleScope
 
 class ReviewsActivity : AppCompatActivity() {
 
@@ -35,21 +37,18 @@ class ReviewsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // set the clinic id
-        var clinicId = intent.getStringExtra("CLINIC_ID") ?: return
-
-        CoroutineScope(Dispatchers.IO).launch {
-            val result = FirebaseReviewRepo().fetchReviewsForClinic(clinicId)
-            withContext(Dispatchers.Main){
-                if (result.isSuccess){
-                    val reviews = result.getOrDefault(emptyList())
-                    val adapter = ReviewAdapter(reviews)
-                    binding.recyclerReviews.adapter = adapter
-                }
-                else
-                {
-                    showMessage("Error loading reviews")
-                }
+        lifecycleScope.launch {
+            val result = FirebaseReviewRepo().fetchAllReviews()
+            if (result.isSuccess){
+                val reviews = result.getOrDefault(emptyList())
+                val adapter = ReviewAdapter(reviews, CoroutineScope(Dispatchers.IO))
+                binding.recyclerReviews.adapter = adapter
+                Log.d("ReviewsActivity", "Reviews loaded: $reviews")
+            }
+            else
+            {
+                showMessage("Error loading reviews")
+                Log.e("ReviewsActivity", "Error loading reviews: ${result.exceptionOrNull()}")
             }
         }
 

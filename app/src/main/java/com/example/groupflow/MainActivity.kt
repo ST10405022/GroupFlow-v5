@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
 
         // Card click listeners for Reviews
         binding.cardReviews.setOnClickListener {
-            startActivity(Intent(this, LeaveReviewActivity::class.java))
+            startActivity(Intent(this, ReviewsActivity::class.java))
         }
 
         // Card click listeners for Clinic Info
