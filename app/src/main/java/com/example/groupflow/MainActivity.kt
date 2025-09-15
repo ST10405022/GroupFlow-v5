@@ -19,6 +19,7 @@ import com.example.groupflow.ui.profile.UserProfileActivity
 import com.example.groupflow.ui.reviews.ReviewsActivity
 import com.example.groupflow.ui.ultrascans.UltrascansActivity
 import com.example.groupflow.core.domain.Role
+import com.example.groupflow.ui.reviews.LeaveReviewActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -61,7 +62,7 @@ class MainActivity : AppCompatActivity() {
 
         // Card click listeners for Reviews
         binding.cardReviews.setOnClickListener {
-            startActivity(Intent(this, ReviewsActivity::class.java))
+            startActivity(Intent(this, LeaveReviewActivity::class.java))
         }
 
         // Card click listeners for Clinic Info

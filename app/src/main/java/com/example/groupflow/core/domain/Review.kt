@@ -4,8 +4,8 @@ import java.time.LocalDateTime
 
 data class Review(
     val id: String = "",
-    val patientId: String = "",
-    val clinicId: String = "",
+    val patientId: String? = "",
+    val clinicId: String? = "",
     val rating: Int = 0,
     val comment: String = "",
     val createdDate: LocalDateTime = LocalDateTime.now()

@@ -6,8 +6,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.groupflow.MainActivity
 import com.example.groupflow.R
+import com.example.groupflow.core.domain.Review
 import com.example.groupflow.core.domain.Role
 import com.example.groupflow.core.domain.User
+import com.example.groupflow.data.review.FirebaseReviewRepo
 import com.example.groupflow.databinding.ActivityLeaveReviewBinding
 import com.example.groupflow.ui.notifications.NotificationsActivity
 import com.example.groupflow.ui.appointments.AppointmentsActivity
@@ -15,10 +17,19 @@ import com.example.groupflow.ui.auth.LoginActivity
 import com.example.groupflow.ui.auth.SessionCreation
 import com.example.groupflow.ui.hubs.EmployeeHubActivity
 import com.example.groupflow.ui.info.DoctorInfoActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
 
 class LeaveReviewActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLeaveReviewBinding
     private var currentUser: User? = null
+
+    private fun showMessage(message: String){                       // (Android Developers, 2025)
+        Toast.makeText(this@LeaveReviewActivity, message, Toast.LENGTH_SHORT).show()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,10 +37,45 @@ class LeaveReviewActivity : AppCompatActivity() {
         binding = ActivityLeaveReviewBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Get user information
         currentUser = SessionCreation.getUser(this)
 
         binding.topAppBarReview.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
+        }
+
+        // Submit review button
+        binding.btnSubmitReview.setOnClickListener {
+            val rating = binding.ratingBar.rating.toInt()
+            val comment = binding.editTextReview.text.toString()
+
+            if (rating < 1 || rating > 5 || comment.isEmpty())
+            {
+                showMessage("Provide a comment and a rating")
+                return@setOnClickListener
+            }
+
+            val review = Review(
+                patientId = currentUser?.id,
+                clinicId = null,
+                rating = rating,
+                comment = comment,
+                createdDate = LocalDateTime.now()
+            )
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val result = FirebaseReviewRepo().addReview(review)
+                withContext(Dispatchers.Main){
+                    if (result.isSuccess){
+                        showMessage("Review submitted")
+                        finish()
+                    }
+                    else
+                    {
+                        showMessage("Failed to submit review")
+                    }
+                }
+            }
         }
 
         // Top app bar menu item click listener

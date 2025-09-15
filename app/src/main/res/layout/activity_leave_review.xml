@@ -30,8 +30,7 @@
         app:layout_constraintTop_toBottomOf="@id/topAppBarReview"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        style="?android:attr/ratingBarStyleIndicator" />
+        android:layout_marginTop="16dp" />
 
     <!-- Review Text -->
     <com.google.android.material.textfield.TextInputLayout
