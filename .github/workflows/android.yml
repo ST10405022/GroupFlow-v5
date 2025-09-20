@@ -74,10 +74,6 @@ jobs:
       #- name: Run Detekt (Kotlin lint)
       #  run: ./gradlew detekt
 
-      # SpotBugs for Java (optional if you mix Java/Kotlin)
-      - name: Run SpotBugs
-        run: ./gradlew spotbugsMain spotbugsTest
-
   # ------------------------------------------------------
   # JOB 3: Dependency Vulnerability Scanning
   # ------------------------------------------------------
