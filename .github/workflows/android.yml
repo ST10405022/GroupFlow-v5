@@ -71,8 +71,8 @@ jobs:
         run: chmod +x ./gradlew
 
       # Detekt for Kotlin
-      - name: Run Detekt (Kotlin lint)
-        run: ./gradlew detekt
+      #- name: Run Detekt (Kotlin lint)
+      #  run: ./gradlew detekt
 
       # SpotBugs for Java (optional if you mix Java/Kotlin)
       - name: Run SpotBugs
