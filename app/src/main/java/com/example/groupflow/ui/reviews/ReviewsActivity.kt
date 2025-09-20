@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.groupflow.MainActivity
 import com.example.groupflow.R
@@ -12,25 +13,22 @@ import com.example.groupflow.core.domain.Role
 import com.example.groupflow.core.domain.User
 import com.example.groupflow.data.review.FirebaseReviewRepo
 import com.example.groupflow.databinding.ActivityReviewsBinding
-import com.example.groupflow.ui.notifications.NotificationsActivity
 import com.example.groupflow.ui.appointments.AppointmentsActivity
 import com.example.groupflow.ui.auth.LoginActivity
 import com.example.groupflow.ui.auth.SessionCreation
 import com.example.groupflow.ui.hubs.EmployeeHubActivity
 import com.example.groupflow.ui.info.DoctorInfoActivity
+import com.example.groupflow.ui.notifications.NotificationsActivity
 import com.example.groupflow.ui.profile.UserProfileActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import androidx.lifecycle.lifecycleScope
 
 class ReviewsActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityReviewsBinding
     private var currentUser: User? = null
 
-    private fun showMessage(message: String){                       // (Android Developers, 2025)
+    private fun showMessage(message: String) { // (Android Developers, 2025)
         Toast.makeText(this@ReviewsActivity, message, Toast.LENGTH_SHORT).show()
     }
 
@@ -39,14 +37,12 @@ class ReviewsActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             val result = FirebaseReviewRepo().fetchAllReviews()
-            if (result.isSuccess){
+            if (result.isSuccess) {
                 val reviews = result.getOrDefault(emptyList())
                 val adapter = ReviewAdapter(reviews, CoroutineScope(Dispatchers.IO))
                 binding.recyclerReviews.adapter = adapter
                 Log.d("ReviewsActivity", "Reviews loaded: $reviews")
-            }
-            else
-            {
+            } else {
                 showMessage("Error loading reviews")
                 Log.e("ReviewsActivity", "Error loading reviews: ${result.exceptionOrNull()}")
             }

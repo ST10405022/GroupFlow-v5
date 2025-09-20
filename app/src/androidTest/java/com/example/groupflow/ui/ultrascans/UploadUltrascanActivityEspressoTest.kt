@@ -16,7 +16,6 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class UploadUltrascanActivityEspressoTest {
-
     @Before
     fun setup() {
         Intents.init()
@@ -33,5 +32,5 @@ class UploadUltrascanActivityEspressoTest {
         onView(withId(R.id.uploadImageButton)).perform(click())
         Intents.intended(hasAction(Intent.ACTION_GET_CONTENT))
     }
-    //(Android Developers, n.d.)
+    // (Android Developers, n.d.)
 }

@@ -1,12 +1,11 @@
 package com.example.groupflow.ui.ultrascans
 
-import org.junit.Test
-import io.mockk.mockk
 import io.mockk.every
+import io.mockk.mockk
 import io.mockk.verify
+import org.junit.Test
 
 class UploadUltrascanActivityTest {
-
     private val storageMock = mockk<com.google.firebase.storage.StorageReference>(relaxed = true)
     private val databaseMock = mockk<com.google.firebase.database.DatabaseReference>(relaxed = true)
 
@@ -27,5 +26,5 @@ class UploadUltrascanActivityTest {
         verify { storageMock.putFile(any()) }
         verify { databaseMock.child(any()).setValue(any()) }
     }
-    //(Android Developers, n.d.)
+    // (Android Developers, n.d.)
 }

@@ -9,5 +9,5 @@ data class Notification(
     val timestamp: LocalDateTime = LocalDateTime.now(),
     val read: Boolean = false,
     val type: String? = null,
-    val relatedId: String? = null
+    val relatedId: String? = null,
 )

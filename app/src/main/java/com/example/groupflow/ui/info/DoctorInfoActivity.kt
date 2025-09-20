@@ -7,18 +7,17 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.groupflow.MainActivity
 import com.example.groupflow.R
 import com.example.groupflow.core.domain.DoctorInfo
-import com.example.groupflow.core.domain.User
 import com.example.groupflow.core.domain.Role
+import com.example.groupflow.core.domain.User
 import com.example.groupflow.databinding.ActivityDoctorInfoBinding
-import com.example.groupflow.ui.notifications.NotificationsActivity
 import com.example.groupflow.ui.appointments.AppointmentsActivity
 import com.example.groupflow.ui.auth.LoginActivity
 import com.example.groupflow.ui.auth.SessionCreation
 import com.example.groupflow.ui.hubs.EmployeeHubActivity
+import com.example.groupflow.ui.notifications.NotificationsActivity
 import com.example.groupflow.ui.profile.UserProfileActivity
 
 class DoctorInfoActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityDoctorInfoBinding
     private var currentUser: User? = null
 
@@ -49,9 +48,11 @@ class DoctorInfoActivity : AppCompatActivity() {
                 R.id.menu_logout -> {
                     SessionCreation.logout(this)
                     Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, LoginActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    })
+                    startActivity(
+                        Intent(this, LoginActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        },
+                    )
                     true
                 }
                 else -> false
@@ -77,8 +78,12 @@ class DoctorInfoActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_profile -> { // Doctor Info menu item
-                    Toast.makeText(this, "Already viewing doctor info",
-                        Toast.LENGTH_SHORT).show()
+                    Toast
+                        .makeText(
+                            this,
+                            "Already viewing doctor info",
+                            Toast.LENGTH_SHORT,
+                        ).show()
                     true
                 }
                 R.id.nav_notifications -> { // Notifications menu item
@@ -90,13 +95,14 @@ class DoctorInfoActivity : AppCompatActivity() {
         }
 
         // Example doctor data (replace with actual source later)
-        val doctor = DoctorInfo(
-            name = "Dr. Emily Smith",
-            specialty = "Obstetrician & Gynaecologist",
-            phoneNumber = "+27 82 123 4567",
-            email = "dr.emily@clinic.co.za",
-            clinicName = "GroupFlow Women’s Health Clinic"
-        )
+        val doctor =
+            DoctorInfo(
+                name = "Dr. Emily Smith",
+                specialty = "Obstetrician & Gynaecologist",
+                phoneNumber = "+27 82 123 4567",
+                email = "dr.emily@clinic.co.za",
+                clinicName = "GroupFlow Women’s Health Clinic",
+            )
 
         displayDoctorInfo(doctor)
     }

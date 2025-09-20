@@ -8,5 +8,5 @@ data class ClinicInfo(
     val openingHours: String = "",
     val clinicLocation: String = "",
     val contactDetails: String = "",
-    val businessIdentifierCode: String = ""
+    val businessIdentifierCode: String = "",
 )

@@ -12,21 +12,24 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 
 class FirebaseAppointmentRepo : AppointmentService {
-
     private val db: DatabaseReference = FirebaseDatabase.getInstance().getReference("appointments")
     private val zone = ZoneId.systemDefault()
 
     // Employee schedules an appointment for patient at dateTime -> returns created Appointment
-    override suspend fun schedules(patient: Patient, dateTime: LocalDateTime): Appointment {
+    override suspend fun schedules(
+        patient: Patient,
+        dateTime: LocalDateTime,
+    ): Appointment {
         val key = db.push().key ?: throw IllegalStateException("Unable to generate key")
-        val appointment = Appointment(
-            id = key,
-            requestedDate = dateTime,
-            status = Appointment.Status.APPROVED,
-            reason = "",
-            patientId = patient.id,
-            employeeId = ""
-        )
+        val appointment =
+            Appointment(
+                id = key,
+                requestedDate = dateTime,
+                status = Appointment.Status.APPROVED,
+                reason = "",
+                patientId = patient.id,
+                employeeId = "",
+            )
         db.child(key).setValue(toMap(appointment)).await()
         return appointment
     }
@@ -51,51 +54,62 @@ class FirebaseAppointmentRepo : AppointmentService {
 
     // List appointments for a patient (synchronous return)
     override suspend fun listForPatient(patientId: String): List<Appointment> {
-        val snap = db.orderByChild("patientId").equalTo(patientId).get().await()
+        val snap =
+            db
+                .orderByChild("patientId")
+                .equalTo(patientId)
+                .get()
+                .await()
         return snap.children.mapNotNull { snapshotToAppointment(it) }
     }
 
     // Create (general) appointment — return Result<Unit>
-    override suspend fun createAppointment(appointment: Appointment): Result<Unit> {
-        return try {
+    override suspend fun createAppointment(appointment: Appointment): Result<Unit> =
+        try {
             val key = appointment.id.ifBlank { db.push().key!! }
             db.child(key).setValue(toMap(appointment.copy(id = key))).await()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
         }
-    }
 
-    override suspend fun getAppointmentsForUser(userId: String): Result<List<Appointment>> {
-        return try {
-            val snap = db.orderByChild("patientId").equalTo(userId).get().await()
+    override suspend fun getAppointmentsForUser(userId: String): Result<List<Appointment>> =
+        try {
+            val snap =
+                db
+                    .orderByChild("patientId")
+                    .equalTo(userId)
+                    .get()
+                    .await()
             val list = snap.children.mapNotNull { snapshotToAppointment(it) }
             Result.success(list)
         } catch (e: Exception) {
             Result.failure(e)
         }
-    }
 
-    override suspend fun updateAppointment(appointment: Appointment): Result<Unit> {
-        return try {
+    override suspend fun updateAppointment(appointment: Appointment): Result<Unit> =
+        try {
             if (appointment.id.isBlank()) throw IllegalArgumentException("Appointment id required")
             db.child(appointment.id).setValue(toMap(appointment)).await()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
         }
-    }
 
     // Helper: convert Appointment -> Map (storable in Firebase)
     private fun toMap(a: Appointment): Map<String, Any?> {
-        val millis = a.requestedDate.atZone(zone).toInstant().toEpochMilli()
+        val millis =
+            a.requestedDate
+                .atZone(zone)
+                .toInstant()
+                .toEpochMilli()
         return mapOf(
             "id" to a.id,
             "requestedDate" to millis,
             "status" to a.status.name,
             "reason" to a.reason,
             "patientId" to a.patientId,
-            "employeeId" to a.employeeId
+            "employeeId" to a.employeeId,
         )
     }
 
@@ -105,7 +119,12 @@ class FirebaseAppointmentRepo : AppointmentService {
         val requestedMillis = snapshot.child("requestedDate").getValue(Long::class.java) ?: 0L
         val requestedDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(requestedMillis), zone)
         val statusStr = snapshot.child("status").getValue(String::class.java) ?: Appointment.Status.PENDING.name
-        val status = try { Appointment.Status.valueOf(statusStr) } catch (_: Exception) { Appointment.Status.PENDING }
+        val status =
+            try {
+                Appointment.Status.valueOf(statusStr)
+            } catch (_: Exception) {
+                Appointment.Status.PENDING
+            }
         val reason = snapshot.child("reason").getValue(String::class.java) ?: ""
         val patientId = snapshot.child("patientId").getValue(String::class.java) ?: ""
         val employeeId = snapshot.child("employeeId").getValue(String::class.java) ?: ""

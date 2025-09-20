@@ -20,5 +20,5 @@ class ToastMatcher : TypeSafeMatcher<Root>() {
         val appToken: IBinder = root.decorView.applicationWindowToken
         return windowToken === appToken
     }
-    //(Android Developers, n.d.)
+    // (Android Developers, n.d.)
 }

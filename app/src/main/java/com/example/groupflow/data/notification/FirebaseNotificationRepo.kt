@@ -12,15 +12,17 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 
 class FirebaseNotificationRepo : NotificationService {
-
     private val db: DatabaseReference = FirebaseDatabase.getInstance().getReference("notifications")
     private val zone = ZoneId.systemDefault()
 
     /**
      * Send a notification to a specific user (patient).
      */
-    override suspend fun pushNotificationForUser(userId: String, notification: Notification): Result<Unit> {
-        return try {
+    override suspend fun pushNotificationForUser(
+        userId: String,
+        notification: Notification,
+    ): Result<Unit> =
+        try {
             val key = db.push().key ?: throw IllegalStateException("No key generated")
             val model = notification.toModel(key, userId)
             db.child(key).setValue(model).await()
@@ -28,21 +30,24 @@ class FirebaseNotificationRepo : NotificationService {
         } catch (e: Exception) {
             Result.failure(e)
         }
-    }
 
     /**
      * Fetch notifications for a specific user (patient) only.
      *
      */
-    override suspend fun getNotificationsForUser(userId: String): Result<List<Notification>> {
-        return try {
-            val snapshot = db.orderByChild("recipientId").equalTo(userId).get().await()
+    override suspend fun getNotificationsForUser(userId: String): Result<List<Notification>> =
+        try {
+            val snapshot =
+                db
+                    .orderByChild("recipientId")
+                    .equalTo(userId)
+                    .get()
+                    .await()
             val list = snapshot.children.mapNotNull { it.toDomain() }
             Result.success(list.sortedByDescending { it.timestamp }) // most recent first
         } catch (e: Exception) {
             Result.failure(e)
         }
-    }
 
     /**
      * Convert domain Notification -> NotificationModel for Firebase storage
@@ -52,8 +57,15 @@ class FirebaseNotificationRepo : NotificationService {
      * @see NotificationModel
      * @see Notification
      */
-    private fun Notification.toModel(key: String, recipientId: String): NotificationModel {
-        val millis = this.timestamp.atZone(zone).toInstant().toEpochMilli()
+    private fun Notification.toModel(
+        key: String,
+        recipientId: String,
+    ): NotificationModel {
+        val millis =
+            this.timestamp
+                .atZone(zone)
+                .toInstant()
+                .toEpochMilli()
         return NotificationModel(
             id = key,
             message = this.message,
@@ -61,7 +73,7 @@ class FirebaseNotificationRepo : NotificationService {
             timestamp = millis,
             read = this.read,
             type = this.type,
-            relatedId = this.relatedId
+            relatedId = this.relatedId,
         )
     }
 

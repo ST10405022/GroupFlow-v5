@@ -6,5 +6,5 @@ data class UltrascanModel(
     val uploadedAt: Long = 0,
     val patientId: String = "",
     val description: String? = null,
-    val fileName: String = ""
+    val fileName: String = "",
 )

@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.detekt)
+    alias(libs.plugins.ktlint)
 }
 
 android {
@@ -53,7 +55,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-
     // Unit testing
     testImplementation(libs.junit)              // JUnit 5
     testImplementation(libs.mockk)             // MockK
@@ -81,7 +82,38 @@ dependencies {
 
 }
 
-
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+// Detekt configuration
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+    // Use the rules file
+    config.from(files("$rootDir/config/detekt/detekt.yml"))
+    buildUponDefaultConfig = true
+    allRules = false
+    ignoreFailures = true
+
+    // Configure reports
+    reports {
+        html.required.set(true)
+        html.outputLocation.set(file("build/reports/detekt/detekt.html"))
+        xml.required.set(true)
+        xml.outputLocation.set(file("build/reports/detekt/detekt.xml"))
+        txt.required.set(false)
+    }
+}
+
+// KtLint configuration
+ktlint {
+    debug.set(true)
+    verbose.set(true)
+    android.set(true)
+    outputToConsole.set(true)
+    ignoreFailures.set(true)
+    enableExperimentalRules.set(true)
+    reporters {
+        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.PLAIN)
+        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.CHECKSTYLE)
+    }
 }

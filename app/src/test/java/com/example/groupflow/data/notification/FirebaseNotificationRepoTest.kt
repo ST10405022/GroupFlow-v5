@@ -8,18 +8,18 @@ import org.mockito.Mockito.*
 import java.time.LocalDateTime
 
 class FirebaseNotificationRepoTest {
-
     private val repo = FirebaseNotificationRepo()
 
     @Test
     fun `toMap should convert Notification to map correctly`() {
-        val notification = Notification(
-            id = "123",
-            message = "Hello",
-            recipientId = "user1",
-            timestamp = LocalDateTime.of(2025, 1, 1, 12, 0),
-            read = false
-        )
+        val notification =
+            Notification(
+                id = "123",
+                message = "Hello",
+                recipientId = "user1",
+                timestamp = LocalDateTime.of(2025, 1, 1, 12, 0),
+                read = false,
+            )
 
         val map = repo.invokePrivateToMap(notification)
 
@@ -55,13 +55,14 @@ class FirebaseNotificationRepoTest {
     }
 
     private fun FirebaseNotificationRepo.invokePrivateToMap(n: Notification) =
-        this.javaClass.getDeclaredMethod("toMap", Notification::class.java)
+        this.javaClass
+            .getDeclaredMethod("toMap", Notification::class.java)
             .apply { isAccessible = true }
             .invoke(this, n) as Map<*, *>
 
     private fun FirebaseNotificationRepo.invokePrivateSnapshotToNotification(snapshot: DataSnapshot) =
-        this.javaClass.getDeclaredMethod("snapshotToNotification", DataSnapshot::class.java)
+        this.javaClass
+            .getDeclaredMethod("snapshotToNotification", DataSnapshot::class.java)
             .apply { isAccessible = true }
             .invoke(this, snapshot) as Notification?
-
 }

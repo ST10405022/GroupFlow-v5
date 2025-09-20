@@ -9,18 +9,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.groupflow.R
 import com.example.groupflow.core.domain.Review
 import com.google.firebase.database.FirebaseDatabase
-import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.time.format.DateTimeFormatter
 
-class ReviewAdapter(private val reviews: List<Review>,
-                    private val coroutineScope: CoroutineScope) :
-    RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder>() {
-
-    class ReviewViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class ReviewAdapter(
+    private val reviews: List<Review>,
+    private val coroutineScope: CoroutineScope,
+) : RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder>() {
+    class ReviewViewHolder(
+        view: View,
+    ) : RecyclerView.ViewHolder(view) {
         val ratingText: TextView = view.findViewById(R.id.textRating)
         val commentText: TextView = view.findViewById(R.id.textComment)
         val dateText: TextView = view.findViewById(R.id.textDate)
@@ -28,13 +30,21 @@ class ReviewAdapter(private val reviews: List<Review>,
         val patientNameText: TextView = view.findViewById(R.id.textPatientName)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_review, parent, false)
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): ReviewViewHolder {
+        val view =
+            LayoutInflater
+                .from(parent.context)
+                .inflate(R.layout.item_review, parent, false)
         return ReviewViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ReviewViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: ReviewViewHolder,
+        position: Int,
+    ) {
         val review = reviews[position]
 
         // Clear previous name to avoid showing incorrect data while loading
@@ -44,12 +54,14 @@ class ReviewAdapter(private val reviews: List<Review>,
         coroutineScope.launch(Dispatchers.IO) {
             try {
                 // Fetch the name from Firebase using the patientId from the review
-                val userSnapshot = FirebaseDatabase.getInstance()
-                    .getReference("users")
-                    .child(review.patientId!!)
-                    .child("name")
-                    .get()
-                    .await()
+                val userSnapshot =
+                    FirebaseDatabase
+                        .getInstance()
+                        .getReference("users")
+                        .child(review.patientId!!)
+                        .child("name")
+                        .get()
+                        .await()
 
                 val patientName = userSnapshot.getValue(String::class.java) ?: "Unknown Patient"
 
