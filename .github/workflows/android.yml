@@ -74,6 +74,14 @@ jobs:
       #- name: Run Detekt (Kotlin lint)
       #  run: ./gradlew detekt
 
+      # Kotlin lint check
+      #- name: Run ktlint check
+      #  run: ./gradlew ktlintCheck
+
+      # Kotlin lint auto-formatting
+      #- name: Run ktlint format
+      #  run: ./gradlew ktlintFormat
+
   # ------------------------------------------------------
   # JOB 3: Dependency Vulnerability Scanning
   # ------------------------------------------------------
