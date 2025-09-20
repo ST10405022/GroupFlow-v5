@@ -6,6 +6,6 @@ data class NotificationModel(
     val recipientId: String = "", // user ID of the recipient
     val timestamp: Long = System.currentTimeMillis(), // use epoch millis for Firebase
     var read: Boolean = false, // false by default for unread notifications
-    val type: String? = null,   // "ULTRASCAN" or "APPOINTMENT"
-    val relatedId: String? = null // scanId or appointmentId depending on type
+    val type: String? = null, // "ULTRASCAN" or "APPOINTMENT"
+    val relatedId: String? = null, // scanId or appointmentId depending on type
 )

@@ -17,7 +17,6 @@ import java.time.ZoneId
 import java.util.*
 
 class FirebaseScanRepo : ScanService {
-
     private val db: DatabaseReference = FirebaseDatabase.getInstance().getReference("scans")
     private val storageRef = FirebaseStorage.getInstance().reference.child("scans")
     private val zone = ZoneId.systemDefault()
@@ -30,8 +29,12 @@ class FirebaseScanRepo : ScanService {
      * @return A [Result] containing the uploaded [UltrascanImage] object or an error message.
      *
      */
-    override suspend fun uploadScan(patientId: String, imageStream: InputStream, fileName: String?): Result<UltrascanImage> {
-        return try {
+    override suspend fun uploadScan(
+        patientId: String,
+        imageStream: InputStream,
+        fileName: String?,
+    ): Result<UltrascanImage> =
+        try {
             // read bytes off main thread
             val bytes = withContext(Dispatchers.IO) { imageStream.readBytes() }
             val key = db.push().key ?: UUID.randomUUID().toString()
@@ -41,20 +44,20 @@ class FirebaseScanRepo : ScanService {
             val url = fileRef.downloadUrl.await().toString()
 
             val uploadedDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(System.currentTimeMillis()), zone)
-            val scan = UltrascanImage(
-                id = key,
-                imageUrl = url,
-                uploadedDate = uploadedDate,
-                patientId = patientId,
-                description = null
-            )
+            val scan =
+                UltrascanImage(
+                    id = key,
+                    imageUrl = url,
+                    uploadedDate = uploadedDate,
+                    patientId = patientId,
+                    description = null,
+                )
 
             db.child(key).setValue(toMap(scan)).await()
             Result.success(scan)
         } catch (e: Exception) {
             Result.failure(e)
         }
-    }
 
     /**
      * Fetches a list of [UltrascanImage] objects for a given patient ID.
@@ -62,15 +65,19 @@ class FirebaseScanRepo : ScanService {
      * @return A [Result] containing the list of scans or an error message.
      * @see UltrascanImage
      */
-    override suspend fun fetchScansForPatient(patientId: String): Result<List<UltrascanImage>> {
-        return try {
-            val snap = db.orderByChild("patientId").equalTo(patientId).get().await()
+    override suspend fun fetchScansForPatient(patientId: String): Result<List<UltrascanImage>> =
+        try {
+            val snap =
+                db
+                    .orderByChild("patientId")
+                    .equalTo(patientId)
+                    .get()
+                    .await()
             val list = snap.children.mapNotNull { snapshotToScan(it) }
             Result.success(list)
         } catch (e: Exception) {
             Result.failure(e)
         }
-    }
 
     /**
      * Converts a [UltrascanImage] object to a map.
@@ -79,13 +86,17 @@ class FirebaseScanRepo : ScanService {
      * @see UltrascanImage
      */
     private fun toMap(scan: UltrascanImage): Map<String, Any?> {
-        val millis = scan.uploadedDate.atZone(zone).toInstant().toEpochMilli()
+        val millis =
+            scan.uploadedDate
+                .atZone(zone)
+                .toInstant()
+                .toEpochMilli()
         return mapOf(
             "id" to scan.id,
             "imageUrl" to scan.imageUrl,
             "uploadedDate" to millis,
             "patientId" to scan.patientId,
-            "description" to scan.description
+            "description" to scan.description,
         )
     }
 

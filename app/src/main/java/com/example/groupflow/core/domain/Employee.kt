@@ -7,5 +7,5 @@ data class Employee(
     override val role: Role = Role.EMPLOYEE,
     val profileData: String = "",
     val managesPatients: List<String> = emptyList(), // patient IDs
-    val uploadsScans: List<UltrascanImage> = emptyList()
+    val uploadsScans: List<UltrascanImage> = emptyList(),
 ) : User(id, name, email, role)

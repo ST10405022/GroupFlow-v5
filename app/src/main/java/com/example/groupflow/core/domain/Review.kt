@@ -8,7 +8,7 @@ data class Review(
     val clinicId: String? = "",
     val rating: Int = 0,
     val comment: String = "",
-    val createdDate: LocalDateTime = LocalDateTime.now()
+    val createdDate: LocalDateTime = LocalDateTime.now(),
 ) {
     init {
         require(rating in 1..5) { "Rating must be between 1 and 5" }

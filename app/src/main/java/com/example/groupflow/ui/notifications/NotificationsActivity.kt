@@ -13,15 +13,14 @@ import com.example.groupflow.core.domain.User
 import com.example.groupflow.databinding.ActivityNotificationsBinding
 import com.example.groupflow.models.NotificationModel
 import com.example.groupflow.ui.appointments.AppointmentsActivity
-import com.example.groupflow.ui.profile.UserProfileActivity
 import com.example.groupflow.ui.auth.LoginActivity
 import com.example.groupflow.ui.auth.SessionCreation
 import com.example.groupflow.ui.hubs.EmployeeHubActivity
 import com.example.groupflow.ui.info.DoctorInfoActivity
+import com.example.groupflow.ui.profile.UserProfileActivity
 import com.google.firebase.database.*
 
 class NotificationsActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityNotificationsBinding
 
     // Notifications list (mutable for adapter)
@@ -49,8 +48,12 @@ class NotificationsActivity : AppCompatActivity() {
             // Handle the case where the user is not logged in,
             // For now, just logging:
             Log.e("NotificationsActivity", "Current user is null, cannot proceed.")
-            Toast.makeText(this, "Current user is null, cannot proceed.",
-                Toast.LENGTH_SHORT).show()
+            Toast
+                .makeText(
+                    this,
+                    "Current user is null, cannot proceed.",
+                    Toast.LENGTH_SHORT,
+                ).show()
             finish() // Example: close activity if no user
             return
         }
@@ -126,34 +129,43 @@ class NotificationsActivity : AppCompatActivity() {
         val userId = currentUser?.id ?: return
 
         // Listen for notifications in Firebase
-        dbRef.orderByChild("recipientId").equalTo(userId)
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    notifications.clear()
+        dbRef
+            .orderByChild("recipientId")
+            .equalTo(userId)
+            .addValueEventListener(
+                object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        notifications.clear()
 
-                    for (snap in snapshot.children) {
-                        val id = snap.child("id").getValue(String::class.java) ?: snap.key ?: continue
-                        val message = snap.child("message").getValue(String::class.java) ?: ""
-                        val recipientId = snap.child("recipientId").getValue(String::class.java) ?: ""
-                        val millis = snap.child("timestamp").getValue(Long::class.java) ?: 0L
-                        val read = snap.child("read").getValue(Boolean::class.java) ?: false
-                        val relatedId = snap.child("relatedId").getValue(String::class.java) ?: ""
-                        val type = snap.child("type").getValue(String::class.java) ?: ""
+                        for (snap in snapshot.children) {
+                            val id = snap.child("id").getValue(String::class.java) ?: snap.key ?: continue
+                            val message = snap.child("message").getValue(String::class.java) ?: ""
+                            val recipientId = snap.child("recipientId").getValue(String::class.java) ?: ""
+                            val millis = snap.child("timestamp").getValue(Long::class.java) ?: 0L
+                            val read = snap.child("read").getValue(Boolean::class.java) ?: false
+                            val relatedId = snap.child("relatedId").getValue(String::class.java) ?: ""
+                            val type = snap.child("type").getValue(String::class.java) ?: ""
 
-                        // Create notification model and add to list
-                        notifications.add(NotificationModel(id, message, recipientId, millis, read, type, relatedId))
+                            // Create notification model and add to list
+                            notifications.add(NotificationModel(id, message, recipientId, millis, read, type, relatedId))
+                        }
+
+                        // Sort unread notifications first
+                        notifications.sortWith(compareBy({ it.read }, { -it.timestamp }))
+
+                        // Notify adapter
+                        adapter.notifyDataSetChanged()
                     }
 
-                    // Sort unread notifications first
-                    notifications.sortWith(compareBy({ it.read }, { -it.timestamp }))
-
-                    // Notify adapter
-                    adapter.notifyDataSetChanged()
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Toast.makeText(this@NotificationsActivity, "Failed to load notifications: ${error.message}", Toast.LENGTH_SHORT).show()
-                }
-            })
+                    override fun onCancelled(error: DatabaseError) {
+                        Toast
+                            .makeText(
+                                this@NotificationsActivity,
+                                "Failed to load notifications: ${error.message}",
+                                Toast.LENGTH_SHORT,
+                            ).show()
+                    }
+                },
+            )
     }
 }

@@ -5,5 +5,5 @@ data class DoctorInfo(
     val specialty: String = "",
     val phoneNumber: String = "",
     val email: String = "",
-    val clinicName: String = ""
+    val clinicName: String = "",
 )

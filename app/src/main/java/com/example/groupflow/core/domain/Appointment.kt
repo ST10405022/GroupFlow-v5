@@ -8,9 +8,10 @@ data class Appointment(
     val status: Status = Status.PENDING,
     val reason: String = "",
     val patientId: String = "",
-    val employeeId: String = ""
+    val employeeId: String = "",
 ) {
     enum class Status { PENDING, APPROVED, DECLINED }
+
     init {
         require(requestedDate.isAfter(LocalDateTime.now())) {
             "Appointment must be in the future"

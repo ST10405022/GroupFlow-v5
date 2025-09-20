@@ -10,27 +10,28 @@ import java.time.LocalDateTime
 
 @RunWith(AndroidJUnit4::class)
 class FirebaseNotificationRepoInstrumentedTest {
-
     private val repo = FirebaseNotificationRepo()
 
     @Test
-    fun pushAndFetchNotification_shouldSucceed() = runBlocking {
-        val notification = Notification(
-            id = "",
-            message = "Test message",
-            recipientId = "testUser",
-            timestamp = LocalDateTime.now(),
-            read = false
-        )
+    fun pushAndFetchNotification_shouldSucceed() =
+        runBlocking {
+            val notification =
+                Notification(
+                    id = "",
+                    message = "Test message",
+                    recipientId = "testUser",
+                    timestamp = LocalDateTime.now(),
+                    read = false,
+                )
 
-        val pushResult = repo.pushNotificationForUser("testUser", notification)
-        assertTrue(pushResult.isSuccess)
+            val pushResult = repo.pushNotificationForUser("testUser", notification)
+            assertTrue(pushResult.isSuccess)
 
-        val fetchResult = repo.getNotificationsForUser("testUser")
-        assertTrue(fetchResult.isSuccess)
+            val fetchResult = repo.getNotificationsForUser("testUser")
+            assertTrue(fetchResult.isSuccess)
 
-        val notifications = fetchResult.getOrNull()
-        assertNotNull(notifications)
-        assertTrue(notifications!!.any { it.message == "Test message" })
-    }
+            val notifications = fetchResult.getOrNull()
+            assertNotNull(notifications)
+            assertTrue(notifications!!.any { it.message == "Test message" })
+        }
 }

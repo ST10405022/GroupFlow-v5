@@ -14,17 +14,19 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class LoginActivityTest {
-
     @Test
     fun testLoginUiElementsAreDisplayed() {
         ActivityScenario.launch(LoginActivity::class.java)
 
         // Check email and password fields + button are visible
-        Espresso.onView(ViewMatchers.withId(R.id.editTextEmail))
+        Espresso
+            .onView(ViewMatchers.withId(R.id.editTextEmail))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-        Espresso.onView(ViewMatchers.withId(R.id.editTextPassword))
+        Espresso
+            .onView(ViewMatchers.withId(R.id.editTextPassword))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-        Espresso.onView(ViewMatchers.withId(R.id.buttonLogin))
+        Espresso
+            .onView(ViewMatchers.withId(R.id.buttonLogin))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
 
@@ -33,16 +35,20 @@ class LoginActivityTest {
         ActivityScenario.launch(LoginActivity::class.java)
 
         // Type email and password
-        Espresso.onView(ViewMatchers.withId(R.id.editTextEmail))
+        Espresso
+            .onView(ViewMatchers.withId(R.id.editTextEmail))
             .perform(ViewActions.typeText("test@example.com"), ViewActions.closeSoftKeyboard())
 
-        Espresso.onView(ViewMatchers.withId(R.id.editTextPassword))
+        Espresso
+            .onView(ViewMatchers.withId(R.id.editTextPassword))
             .perform(ViewActions.typeText("123456"), ViewActions.closeSoftKeyboard())
 
         // Assert text was typed
-        Espresso.onView(ViewMatchers.withId(R.id.editTextEmail))
+        Espresso
+            .onView(ViewMatchers.withId(R.id.editTextEmail))
             .check(ViewAssertions.matches(ViewMatchers.withText("test@example.com")))
-        Espresso.onView(ViewMatchers.withId(R.id.editTextPassword))
+        Espresso
+            .onView(ViewMatchers.withId(R.id.editTextPassword))
             .check(ViewAssertions.matches(ViewMatchers.withText("123456")))
     }
 
@@ -55,11 +61,12 @@ class LoginActivityTest {
 
         // Espresso cannot directly read Toasts → we check indirectly via decorView
         // You’ll need to set up ToastMatcher
-        Espresso.onView(ViewMatchers.withText(CoreMatchers.containsString("Email and Password required")))
+        Espresso
+            .onView(ViewMatchers.withText(CoreMatchers.containsString("Email and Password required")))
             .inRoot(ToastMatcher())
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
 
         scenario.close()
     }
-    //(Android Developers, n.d.)
+    // (Android Developers, n.d.)
 }

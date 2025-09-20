@@ -16,15 +16,17 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class LeaveReviewActivityTest {
-
     private lateinit var scenario: ActivityScenario<LeaveReviewActivity>
 
     @Before
     fun setup() {
-        scenario = ActivityScenario.launch(Intent(Intent.ACTION_MAIN).setClassName(
-            "com.example.groupflow",
-            "com.example.groupflow.ui.reviews.LeaveReviewActivity"
-        ))
+        scenario =
+            ActivityScenario.launch(
+                Intent(Intent.ACTION_MAIN).setClassName(
+                    "com.example.groupflow",
+                    "com.example.groupflow.ui.reviews.LeaveReviewActivity",
+                ),
+            )
     }
 
     @After

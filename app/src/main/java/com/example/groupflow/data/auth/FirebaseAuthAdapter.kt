@@ -1,7 +1,6 @@
 package com.example.groupflow.data.auth
 
 import android.content.Context
-import android.se.omapi.Session
 import com.example.groupflow.core.domain.*
 import com.example.groupflow.core.service.AuthenticationService
 import com.example.groupflow.ui.auth.SessionCreation
@@ -10,8 +9,8 @@ import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.tasks.await
 
 class FirebaseAuthAdapter(
-    private val context: Context) : AuthenticationService {
-
+    private val context: Context,
+) : AuthenticationService {
     private val auth = FirebaseAuth.getInstance()
     private val usersRef = FirebaseDatabase.getInstance().getReference("users")
 
@@ -27,16 +26,22 @@ class FirebaseAuthAdapter(
      * @throws Exception If there is an error during the registration process.
      * @see Result
      */
-    override suspend fun register(email: String, password: String, displayName: String, role: String): Result<String> {
-        return try {
+    override suspend fun register(
+        email: String,
+        password: String,
+        displayName: String,
+        role: String,
+    ): Result<String> =
+        try {
             val result = auth.createUserWithEmailAndPassword(email, password).await()
             val uid = result.user?.uid ?: throw IllegalStateException("No UID returned from Firebase")
 
             val roleEnum = Role.valueOf(role.uppercase())
-            val userObject: User = when (roleEnum) {
-                Role.PATIENT -> Patient(id = uid, name = displayName, email = email, role = Role.PATIENT)
-                Role.EMPLOYEE -> Employee(id = uid, name = displayName, email = email, role = Role.EMPLOYEE)
-            }
+            val userObject: User =
+                when (roleEnum) {
+                    Role.PATIENT -> Patient(id = uid, name = displayName, email = email, role = Role.PATIENT)
+                    Role.EMPLOYEE -> Employee(id = uid, name = displayName, email = email, role = Role.EMPLOYEE)
+                }
 
             usersRef.child(uid).setValue(userObject).await()
 
@@ -47,7 +52,6 @@ class FirebaseAuthAdapter(
         } catch (ex: Exception) {
             Result.failure(ex)
         }
-    }
 
     /**
      * Logs in a user with the provided email and password.
@@ -59,36 +63,33 @@ class FirebaseAuthAdapter(
      * @throws Exception If there is an error during the login process.
      * @see Result
      */
-    override suspend fun login(email: String, password: String): Result<String> {
-        return try {
+    override suspend fun login(
+        email: String,
+        password: String,
+    ): Result<String> =
+        try {
             val result = auth.signInWithEmailAndPassword(email, password).await()
             val uid = result.user?.uid ?: throw IllegalStateException("No UID")
 
-            //Save session and fetch user profile
+            // Save session and fetch user profile
             val snapshot = usersRef.child(uid).get().await()
             val role = snapshot.child("role").getValue(String::class.java)?.uppercase()
-            val user: User? = when (role){
-                "PATIENT" -> snapshot.getValue(Patient::class.java)
-                "EMPLOYEE" -> snapshot.getValue(Employee::class.java)
-                else -> null
-            }
+            val user: User? =
+                when (role) {
+                    "PATIENT" -> snapshot.getValue(Patient::class.java)
+                    "EMPLOYEE" -> snapshot.getValue(Employee::class.java)
+                    else -> null
+                }
 
-            if (user != null)
-            {
-                SessionCreation.saveUser(context, user)     // session persistence
+            if (user != null) {
+                SessionCreation.saveUser(context, user) // session persistence
                 Result.success(uid)
-            }
-            else
-            {
+            } else {
                 Result.failure(IllegalStateException("Unable to find user profile"))
             }
-
-        }
-        catch (ex: Exception)
-        {
+        } catch (ex: Exception) {
             Result.failure(ex)
         }
-    }
 
     /**
      * Logs out the current user.
@@ -98,7 +99,7 @@ class FirebaseAuthAdapter(
      */
     override fun logout() {
         auth.signOut()
-        SessionCreation.logout(context)     // Clear the active session
+        SessionCreation.logout(context) // Clear the active session
     }
 
     /**
@@ -122,20 +123,22 @@ class FirebaseAuthAdapter(
             val role = snapshot.child("role").getValue(String::class.java)?.uppercase()
 
             // Convert the snapshot to the appropriate User object based on the role
-            val user: User? = when (role) {
-                "PATIENT" -> snapshot.getValue(Patient::class.java)
-                "EMPLOYEE" -> snapshot.getValue(Employee::class.java)
-                else -> null
-            }
+            val user: User? =
+                when (role) {
+                    "PATIENT" -> snapshot.getValue(Patient::class.java)
+                    "EMPLOYEE" -> snapshot.getValue(Employee::class.java)
+                    else -> null
+                }
 
             // Check if the user object is not null before returning it
             if (user != null) {
-                SessionCreation.saveUser(context, user)     // maintain session synchronization
+                SessionCreation.saveUser(context, user) // maintain session synchronization
                 Result.success(user)
             } else {
                 Result.failure(IllegalStateException("User data not found or invalid"))
             }
-        } catch (ex: Exception) { // Handle exceptions
+        } catch (ex: Exception) {
+            // Handle exceptions
             Result.failure(ex)
         }
     }

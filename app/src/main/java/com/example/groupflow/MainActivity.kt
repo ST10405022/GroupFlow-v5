@@ -6,28 +6,26 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.groupflow.core.domain.Role
 import com.example.groupflow.core.domain.User
 import com.example.groupflow.data.AppDatabase
 import com.example.groupflow.databinding.ActivityMainBinding
 import com.example.groupflow.ui.appointments.AppointmentsActivity
-import com.example.groupflow.ui.info.ClinicInfoActivity
-import com.example.groupflow.ui.notifications.NotificationsActivity
 import com.example.groupflow.ui.auth.LoginActivity
 import com.example.groupflow.ui.auth.SessionCreation
+import com.example.groupflow.ui.info.ClinicInfoActivity
 import com.example.groupflow.ui.info.DoctorInfoActivity
+import com.example.groupflow.ui.notifications.NotificationsActivity
 import com.example.groupflow.ui.profile.UserProfileActivity
 import com.example.groupflow.ui.reviews.ReviewsActivity
 import com.example.groupflow.ui.ultrascans.UltrascansActivity
-import com.example.groupflow.core.domain.Role
-import com.example.groupflow.ui.reviews.LeaveReviewActivity
 
 class MainActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityMainBinding
     private lateinit var currentUser: User
 
-    private fun showMessage(message: String){
-                                                    // show message function declaration
+    private fun showMessage(message: String) {
+        // show message function declaration
         Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
     }
 
@@ -116,14 +114,14 @@ class MainActivity : AppCompatActivity() {
      * @param item Selected menu item.
      * @return True if the selection is handled, false otherwise.
      */
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {       // PTA 012
+    override fun onOptionsItemSelected(item: MenuItem): Boolean { // PTA 012
         return when (item.itemId) {
             R.id.menu_logout -> {
-                                                                        // log out authentication service
+                // log out authentication service
                 AppDatabase.authService
-                                                                        // clear the active session
+                // clear the active session
                 SessionCreation.logout(this)
-                                                                        // display logout message
+                // display logout message
                 showMessage("Logged out")
                 val intent = Intent(this, LoginActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

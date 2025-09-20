@@ -8,5 +8,5 @@ data class UltrascanImage(
     val uploadedDate: LocalDateTime = LocalDateTime.now(),
     val patientId: String = "",
     val description: String? = null,
-    val fileName: String = ""
+    val fileName: String = "",
 )

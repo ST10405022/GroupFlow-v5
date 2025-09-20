@@ -16,16 +16,14 @@ import com.example.groupflow.core.domain.Role
 import com.example.groupflow.data.AppDatabase
 import com.example.groupflow.databinding.ActivityLoginBinding
 import com.example.groupflow.ui.hubs.EmployeeHubActivity
-import com.google.firebase.crashlytics.internal.common.AppData
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityLoginBinding
 
-    private fun showMessage(message: String){                       // (Android Developers, 2025)
+    private fun showMessage(message: String) { // (Android Developers, 2025)
         Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
     }
 
@@ -45,7 +43,6 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         // Initialize View Binding
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -55,73 +52,72 @@ class LoginActivity : AppCompatActivity() {
 
         // Handle login logic
         binding.buttonLogin.setOnClickListener {
-                                                                                                    // Login logic implementation
-            val emailAddress = binding.editTextEmail.text.toString().trim()                             // input username
-            val password = binding.editTextPassword.text.toString().trim()                              // input password
+            // Login logic implementation
+            val emailAddress =
+                binding.editTextEmail.text
+                    .toString()
+                    .trim() // input username
+            val password =
+                binding.editTextPassword.text
+                    .toString()
+                    .trim() // input password
 
-            if ((emailAddress == "") || (password == "")){                                              // validate user input
-                Toast.makeText(this,"Please enter email/password", Toast.LENGTH_SHORT).show()
+            if ((emailAddress == "") || (password == "")) { // validate user input
+                Toast.makeText(this, "Please enter email/password", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            lifecycleScope.launch {                                     // (KotlinLang, 2025)
-                try                                                                                     // check whether username exists
-                {
-                    val loggedIn = AppDatabase.authService.login(emailAddress, password)
-
-                    if (loggedIn.isSuccess)                                                             // retrieve user profile
+            lifecycleScope.launch {
+                // (KotlinLang, 2025)
+                try // check whether username exists
                     {
-                        val profileResult = AppDatabase.authService.getCurrentUserProfile()
-                        val currentUser = profileResult.getOrNull()
-                                                                                                        // successful retrieval of profile
-                        if (profileResult.isSuccess && currentUser != null)
-                        {
-                            // store user profile in a session (Roy)
-                            SessionCreation.saveUser(this@LoginActivity, currentUser)
-                            Log.d("LoginActivity", "User profile stored in session")
-                            // welcome the user
-                            showMessage("Welcome ${currentUser.name}")
+                        val loggedIn = AppDatabase.authService.login(emailAddress, password)
 
-                            updateUserFcmToken(currentUser.id)
-
-                            // redirect the user to their appropriate home screen
-                            when (currentUser.role)
+                        if (loggedIn.isSuccess) // retrieve user profile
                             {
-                                Role.PATIENT -> {
-                                    Log.d("LoginActivity", "Starting MainActivity")
-                                    startActivity(
-                                        Intent(
-                                            this@LoginActivity,
-                                            MainActivity::class.java
-                                        )
-                                    )
+                                val profileResult = AppDatabase.authService.getCurrentUserProfile()
+                                val currentUser = profileResult.getOrNull()
+                                // successful retrieval of profile
+                                if (profileResult.isSuccess && currentUser != null) {
+                                    // store user profile in a session (Roy)
+                                    SessionCreation.saveUser(this@LoginActivity, currentUser)
+                                    Log.d("LoginActivity", "User profile stored in session")
+                                    // welcome the user
+                                    showMessage("Welcome ${currentUser.name}")
+
+                                    updateUserFcmToken(currentUser.id)
+
+                                    // redirect the user to their appropriate home screen
+                                    when (currentUser.role) {
+                                        Role.PATIENT -> {
+                                            Log.d("LoginActivity", "Starting MainActivity")
+                                            startActivity(
+                                                Intent(
+                                                    this@LoginActivity,
+                                                    MainActivity::class.java,
+                                                ),
+                                            )
+                                        }
+                                        Role.EMPLOYEE -> {
+                                            Log.d("LoginActivity", "Starting EmployeeHubActivity")
+                                            startActivity(
+                                                Intent(
+                                                    this@LoginActivity,
+                                                    EmployeeHubActivity::class.java,
+                                                ),
+                                            )
+                                        }
+                                    }
+                                    finish()
+                                } else { // show error message (unable to load profile)
+                                    showMessage("Failed to load user profile")
+                                    Log.e("LoginActivity", "Failed to load user profile: ${profileResult.exceptionOrNull()?.message}")
                                 }
-                                Role.EMPLOYEE -> {
-                                    Log.d("LoginActivity", "Starting EmployeeHubActivity")
-                                    startActivity(
-                                        Intent(
-                                            this@LoginActivity,
-                                            EmployeeHubActivity::class.java
-                                        )
-                                    )
-                                }
-                            }
-                            finish()
+                            } else { // show error message (unsuccessful login)
+                            showMessage("Login failed")
+                            Log.e("LoginActivity", "Login failed: ${loggedIn.exceptionOrNull()?.message}")
                         }
-                        else
-                        {                                                                               // show error message (unable to load profile)
-                            showMessage("Failed to load user profile")
-                            Log.e("LoginActivity", "Failed to load user profile: ${profileResult.exceptionOrNull()?.message}")
-                        }
-                    }
-                    else
-                    {                                                                                   // show error message (unsuccessful login)
-                        showMessage("Login failed")
-                        Log.e("LoginActivity", "Login failed: ${loggedIn.exceptionOrNull()?.message}")
-                    }
-                }
-                catch(e:Exception)
-                {
+                    } catch (e: Exception) {
                     showMessage("Unable to load user profile")
                     Log.e("LoginActivity", "Failed to load user profile: ${e.message}")
                 }
@@ -147,7 +143,7 @@ class LoginActivity : AppCompatActivity() {
             when {
                 ContextCompat.checkSelfPermission(
                     this,
-                    Manifest.permission.POST_NOTIFICATIONS
+                    Manifest.permission.POST_NOTIFICATIONS,
                 ) == PackageManager.PERMISSION_GRANTED -> {
                     // Already granted
                     Log.d("LoginActivity", "Notification permission already granted")
@@ -171,7 +167,9 @@ class LoginActivity : AppCompatActivity() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val token = task.result
-                FirebaseDatabase.getInstance().getReference("users/$uid/fcmToken")
+                FirebaseDatabase
+                    .getInstance()
+                    .getReference("users/$uid/fcmToken")
                     .setValue(token)
                     .addOnSuccessListener { Log.d("FCM", "Token updated for user $uid") }
                     .addOnFailureListener { Log.e("FCM", "Failed to update token: ${it.message}") }
@@ -180,7 +178,6 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
-
 }
 
 /**     Reference List

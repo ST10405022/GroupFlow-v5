@@ -15,12 +15,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class NotificationsAdapter(
-    private val notifications: MutableList<NotificationModel>
+    private val notifications: MutableList<NotificationModel>,
 ) : RecyclerView.Adapter<NotificationsAdapter.NotificationViewHolder>() {
-
-    inner class NotificationViewHolder(val binding: ItemNotificationBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-
+    inner class NotificationViewHolder(
+        val binding: ItemNotificationBinding,
+    ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(notification: NotificationModel) {
             // Set message
             binding.notificationMessage.text = notification.message
@@ -48,7 +47,6 @@ class NotificationsAdapter(
                     // Update notification in Firebase
                     val db = FirebaseDatabase.getInstance().getReference("notifications")
                     db.child(notification.id).child("read").setValue(true)
-
                 }
 
                 // Navigate to correct activity
@@ -60,29 +58,27 @@ class NotificationsAdapter(
                 when (notification.type) {
                     // For Ultrascans notification, navigate to UltrascansActivity
                     "ULTRASCAN" -> {
-                        if (userRole.toString() == "EMPLOYEE")
-                        {
+                        if (userRole.toString() == "EMPLOYEE") {
                             val intent = Intent(context, EmployeeHubActivity::class.java)
                             context.startActivity(intent)
-                        }
-                        else {
-                            val intent = Intent(context, UltrascansActivity::class.java).apply {
-                                putExtra("scanId", notification.relatedId)
-                            }
+                        } else {
+                            val intent =
+                                Intent(context, UltrascansActivity::class.java).apply {
+                                    putExtra("scanId", notification.relatedId)
+                                }
                             context.startActivity(intent)
                         }
                     }
                     // For Appointments notification, navigate to AppointmentsActivity
                     "APPOINTMENT" -> {
-                        if (userRole.toString() == "EMPLOYEE")
-                        {
+                        if (userRole.toString() == "EMPLOYEE") {
                             val intent = Intent(context, EmployeeHubActivity::class.java)
                             context.startActivity(intent)
-                        }
-                        else {
-                            val intent = Intent(context, AppointmentsActivity::class.java).apply {
-                                putExtra("appointmentId", notification.relatedId)
-                            }
+                        } else {
+                            val intent =
+                                Intent(context, AppointmentsActivity::class.java).apply {
+                                    putExtra("appointmentId", notification.relatedId)
+                                }
                             context.startActivity(intent)
                         }
                     }
@@ -91,16 +87,25 @@ class NotificationsAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotificationViewHolder {
-        val binding = ItemNotificationBinding.inflate(
-            LayoutInflater.from(parent.context), parent, false
-        )
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): NotificationViewHolder {
+        val binding =
+            ItemNotificationBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false,
+            )
         return NotificationViewHolder(binding)
     }
 
     override fun getItemCount(): Int = notifications.size
 
-    override fun onBindViewHolder(holder: NotificationViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: NotificationViewHolder,
+        position: Int,
+    ) {
         holder.bind(notifications[position])
     }
 }

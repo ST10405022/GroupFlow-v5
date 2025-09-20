@@ -9,16 +9,15 @@ import com.example.groupflow.R
 import com.example.groupflow.core.domain.Role
 import com.example.groupflow.core.domain.User
 import com.example.groupflow.databinding.ActivityUserProfileBinding
-import com.example.groupflow.ui.notifications.NotificationsActivity
 import com.example.groupflow.ui.appointments.AppointmentsActivity
 import com.example.groupflow.ui.auth.LoginActivity
 import com.example.groupflow.ui.auth.SessionCreation
 import com.example.groupflow.ui.hubs.EmployeeHubActivity
 import com.example.groupflow.ui.info.DoctorInfoActivity
+import com.example.groupflow.ui.notifications.NotificationsActivity
 import com.google.android.material.navigation.NavigationBarView
 
 class UserProfileActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityUserProfileBinding
     private var currentUser: User? = null
 
@@ -75,29 +74,30 @@ class UserProfileActivity : AppCompatActivity() {
     }
 
     // Handle bottom nav actions
-    private val navListener = NavigationBarView.OnItemSelectedListener { item ->
-        when (item.itemId) {
-            R.id.nav_home -> {
-                when (currentUser?.role) {
-                    Role.EMPLOYEE -> startActivity(Intent(this, EmployeeHubActivity::class.java))
-                    Role.PATIENT -> startActivity(Intent(this, MainActivity::class.java))
-                    else -> Toast.makeText(this, "Unknown role", Toast.LENGTH_SHORT).show()
+    private val navListener =
+        NavigationBarView.OnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    when (currentUser?.role) {
+                        Role.EMPLOYEE -> startActivity(Intent(this, EmployeeHubActivity::class.java))
+                        Role.PATIENT -> startActivity(Intent(this, MainActivity::class.java))
+                        else -> Toast.makeText(this, "Unknown role", Toast.LENGTH_SHORT).show()
+                    }
+                    true
                 }
-                true
+                R.id.nav_appointments -> {
+                    startActivity(Intent(this, AppointmentsActivity::class.java))
+                    true
+                }
+                R.id.nav_profile -> {
+                    startActivity(Intent(this, DoctorInfoActivity::class.java))
+                    true
+                }
+                R.id.nav_notifications -> {
+                    startActivity(Intent(this, NotificationsActivity::class.java))
+                    true
+                }
+                else -> false
             }
-            R.id.nav_appointments -> {
-                startActivity(Intent(this, AppointmentsActivity::class.java))
-                true
-            }
-            R.id.nav_profile -> {
-                startActivity(Intent(this, DoctorInfoActivity::class.java))
-                true
-            }
-            R.id.nav_notifications -> {
-                startActivity(Intent(this, NotificationsActivity::class.java))
-                true
-            }
-            else -> false
         }
-    }
 }

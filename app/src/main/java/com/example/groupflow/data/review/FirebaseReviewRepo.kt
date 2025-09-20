@@ -1,6 +1,5 @@
 package com.example.groupflow.data.review
 
-import android.util.Log
 import com.example.groupflow.core.domain.Review
 import com.example.groupflow.core.service.ReviewService
 import com.google.firebase.database.DataSnapshot
@@ -12,7 +11,6 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 
 class FirebaseReviewRepo : ReviewService {
-
     private val db: DatabaseReference = FirebaseDatabase.getInstance().getReference("reviews")
     private val zone = ZoneId.systemDefault()
 
@@ -23,16 +21,14 @@ class FirebaseReviewRepo : ReviewService {
      * @throws Exception if the operation fails.
      * @see Review
      */
-    override suspend fun addReview(review: Review): Result<Unit> {
-        return try {
+    override suspend fun addReview(review: Review): Result<Unit> =
+        try {
             val key = review.id.ifBlank { db.push().key!! }
             db.child(key).setValue(toMap(review.copy(id = key))).await()
             Result.success(Unit)
-
         } catch (e: Exception) {
             Result.failure(e)
         }
-    }
 
     /**
      * Fetches a list of reviews for a given clinic ID.
@@ -41,15 +37,19 @@ class FirebaseReviewRepo : ReviewService {
      * @throws Exception if the operation fails.
      * @see Review
      */
-    override suspend fun fetchReviewsForClinic(clinicId: String): Result<List<Review>> {
-        return try {
-            val snapshot = db.orderByChild("clinicId").equalTo(clinicId).get().await()
+    override suspend fun fetchReviewsForClinic(clinicId: String): Result<List<Review>> =
+        try {
+            val snapshot =
+                db
+                    .orderByChild("clinicId")
+                    .equalTo(clinicId)
+                    .get()
+                    .await()
             val list = snapshot.children.mapNotNull { snapshotToReview(it) }
             Result.success(list)
         } catch (e: Exception) {
             Result.failure(e)
         }
-    }
 
     /**
      * Fetches all reviews from the database.
@@ -57,8 +57,8 @@ class FirebaseReviewRepo : ReviewService {
      * @throws Exception if the operation fails.
      * @see Review
      */
-    suspend fun fetchAllReviews(): Result<List<Review>> {
-        return try {
+    suspend fun fetchAllReviews(): Result<List<Review>> =
+        try {
             // Simply get all data at the "reviews" reference without any filtering
             val snapshot = db.get().await()
             val list = snapshot.children.mapNotNull { snapshotToReview(it) }
@@ -66,7 +66,6 @@ class FirebaseReviewRepo : ReviewService {
         } catch (e: Exception) {
             Result.failure(e)
         }
-    }
 
     /**
      * Converts a [Review] object to a map.
@@ -75,14 +74,18 @@ class FirebaseReviewRepo : ReviewService {
      * @see Review
      */
     private fun toMap(r: Review): Map<String, Any?> {
-        val millis = r.createdDate.atZone(zone).toInstant().toEpochMilli()
+        val millis =
+            r.createdDate
+                .atZone(zone)
+                .toInstant()
+                .toEpochMilli()
         return mapOf(
             "id" to r.id,
             "patientId" to r.patientId,
             "clinicId" to r.clinicId,
             "rating" to r.rating,
             "comment" to r.comment,
-            "createdDate" to millis
+            "createdDate" to millis,
         )
     }
 

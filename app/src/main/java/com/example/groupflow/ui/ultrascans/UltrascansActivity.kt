@@ -8,21 +8,20 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.groupflow.MainActivity
-import com.example.groupflow.databinding.ActivityUltrascansBinding
-import com.example.groupflow.models.UltrascanModel
-import com.example.groupflow.ui.auth.SessionCreation
-import com.google.firebase.database.*
 import com.example.groupflow.R
 import com.example.groupflow.core.domain.Role
 import com.example.groupflow.core.domain.User
-import com.example.groupflow.ui.notifications.NotificationsActivity
+import com.example.groupflow.databinding.ActivityUltrascansBinding
+import com.example.groupflow.models.UltrascanModel
 import com.example.groupflow.ui.appointments.AppointmentsActivity
 import com.example.groupflow.ui.auth.LoginActivity
+import com.example.groupflow.ui.auth.SessionCreation
 import com.example.groupflow.ui.hubs.EmployeeHubActivity
+import com.example.groupflow.ui.notifications.NotificationsActivity
 import com.example.groupflow.ui.profile.UserProfileActivity
+import com.google.firebase.database.*
 
 class UltrascansActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityUltrascansBinding
     private val scans = mutableListOf<UltrascanModel>()
     private lateinit var adapter: UltrascanAdapter
@@ -102,10 +101,11 @@ class UltrascansActivity : AppCompatActivity() {
         }
 
         // RecyclerView + Adapter setup
-        adapter = UltrascanAdapter(this, scans) { selectedUrl ->
-            currentFileUrl = selectedUrl
-            Toast.makeText(this, "Selected scan updated", Toast.LENGTH_SHORT).show()
-        }
+        adapter =
+            UltrascanAdapter(this, scans) { selectedUrl ->
+                currentFileUrl = selectedUrl
+                Toast.makeText(this, "Selected scan updated", Toast.LENGTH_SHORT).show()
+            }
 
         binding.recyclerUltrascans.layoutManager = LinearLayoutManager(this)
         binding.recyclerUltrascans.adapter = adapter
@@ -131,47 +131,50 @@ class UltrascansActivity : AppCompatActivity() {
             return
         }
 
-        dbRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                scans.clear()
-                Log.d("UltrascansActivity", "Fetching scans for patientId=$currentPatientId...")
+        dbRef.addValueEventListener(
+            object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    scans.clear()
+                    Log.d("UltrascansActivity", "Fetching scans for patientId=$currentPatientId...")
 
-                for (scanSnap in snapshot.children) {
-                    val scan = scanSnap.getValue(UltrascanModel::class.java)
-                    if (scan != null) {
-                        if (scan.patientId == currentPatientId) {
-                            scans.add(scan)
-                            Log.d("UltrascansActivity", "Loaded scan: ${scan.fileName} (${scan.fileUrl})")
+                    for (scanSnap in snapshot.children) {
+                        val scan = scanSnap.getValue(UltrascanModel::class.java)
+                        if (scan != null) {
+                            if (scan.patientId == currentPatientId) {
+                                scans.add(scan)
+                                Log.d("UltrascansActivity", "Loaded scan: ${scan.fileName} (${scan.fileUrl})")
+                            } else {
+                                Log.d("UltrascansActivity", "Skipped scan for different patient: ${scan.patientId}")
+                            }
                         } else {
-                            Log.d("UltrascansActivity", "Skipped scan for different patient: ${scan.patientId}")
+                            Log.w("UltrascansActivity", "Null scan skipped for snapshot: $scanSnap")
                         }
+                    }
+
+                    if (scans.isEmpty()) {
+                        Log.d("UltrascansActivity", "No scans available for this patient")
+                        binding.textNoScans.visibility = View.VISIBLE
+                        binding.recyclerUltrascans.visibility = View.GONE
                     } else {
-                        Log.w("UltrascansActivity", "Null scan skipped for snapshot: $scanSnap")
+                        binding.textNoScans.visibility = View.GONE
+                        binding.recyclerUltrascans.visibility = View.VISIBLE
+                        adapter.notifyDataSetChanged()
+                        currentFileUrl = scans.lastOrNull()?.fileUrl
+                        Log.d("UltrascansActivity", "Last selected fileUrl: $currentFileUrl")
                     }
                 }
 
-                if (scans.isEmpty()) {
-                    Log.d("UltrascansActivity", "No scans available for this patient")
-                    binding.textNoScans.visibility = View.VISIBLE
-                    binding.recyclerUltrascans.visibility = View.GONE
-                } else {
-                    binding.textNoScans.visibility = View.GONE
-                    binding.recyclerUltrascans.visibility = View.VISIBLE
-                    adapter.notifyDataSetChanged()
-                    currentFileUrl = scans.lastOrNull()?.fileUrl
-                    Log.d("UltrascansActivity", "Last selected fileUrl: $currentFileUrl")
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("UltrascansActivity", "Firebase error: ${error.message}")
+                    Toast
+                        .makeText(
+                            this@UltrascansActivity,
+                            "Failed to load scans: ${error.message}",
+                            Toast.LENGTH_SHORT,
+                        ).show()
                 }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.e("UltrascansActivity", "Firebase error: ${error.message}")
-                Toast.makeText(
-                    this@UltrascansActivity,
-                    "Failed to load scans: ${error.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        })
+            },
+        )
     }
 
     /**

@@ -8,16 +8,15 @@ import com.example.groupflow.R
 import com.example.groupflow.core.domain.Role
 import com.example.groupflow.core.domain.User
 import com.example.groupflow.databinding.ActivityEmployeeHubBinding
-import com.example.groupflow.ui.notifications.NotificationsActivity
 import com.example.groupflow.ui.appointments.AppointmentsActivity
 import com.example.groupflow.ui.auth.LoginActivity
 import com.example.groupflow.ui.auth.SessionCreation
 import com.example.groupflow.ui.info.DoctorInfoActivity
+import com.example.groupflow.ui.notifications.NotificationsActivity
 import com.example.groupflow.ui.patients.PatientSelectionActivity
 import com.example.groupflow.ui.profile.UserProfileActivity
 
 class EmployeeHubActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityEmployeeHubBinding
     private lateinit var currentUser: User
 
@@ -61,9 +60,11 @@ class EmployeeHubActivity : AppCompatActivity() {
                 R.id.menu_logout -> {
                     SessionCreation.logout(this)
                     Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, LoginActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    })
+                    startActivity(
+                        Intent(this, LoginActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        },
+                    )
                     true
                 }
                 else -> false

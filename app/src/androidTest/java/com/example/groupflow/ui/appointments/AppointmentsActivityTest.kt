@@ -13,7 +13,6 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class AppointmentsActivityTest {
-
     @Test
     fun clickAddAppointmentFAB_opensRequestAppointmentActivity() {
         ActivityScenario.launch(AppointmentsActivity::class.java)
@@ -50,7 +49,8 @@ class AppointmentsActivityTest {
 
         // Appointments (already viewing)
         onView(withId(R.id.nav_appointments)).perform(click())
-        onView(withText("Already viewing appointments")).inRoot(ToastMatcher())
+        onView(withText("Already viewing appointments"))
+            .inRoot(ToastMatcher())
             .check(matches(isDisplayed()))
 
         // Profile
@@ -62,5 +62,5 @@ class AppointmentsActivityTest {
         onView(withId(R.id.nav_notifications)).perform(click())
         onView(withId(R.id.topAppBarNotifications)).check(matches(isDisplayed()))
     }
-    //(Android Developers, n.d.)
+    // (Android Developers, n.d.)
 }

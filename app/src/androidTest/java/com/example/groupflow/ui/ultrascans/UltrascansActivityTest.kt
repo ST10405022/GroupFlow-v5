@@ -19,7 +19,6 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class UltrascansActivityTest {
-
     @Before
     fun setUp() {
         Intents.init()
@@ -38,7 +37,8 @@ class UltrascansActivityTest {
             assert(activity.isFinishing || activity.isDestroyed)
         }
     }
-    //(Android Developers, n.d.)
+
+    // (Android Developers, n.d.)
     @Test
     fun viewButton_noFile_showsToast() {
         ActivityScenario.launch(UltrascansActivity::class.java)
@@ -68,10 +68,10 @@ class UltrascansActivityTest {
         onView(withId(R.id.btnView)).perform(click())
 
         Intents.intended(
-            IntentMatchers.hasAction(Intent.ACTION_VIEW)
+            IntentMatchers.hasAction(Intent.ACTION_VIEW),
         )
         Intents.intended(
-            IntentMatchers.hasData(Uri.parse("https://example.com/file.pdf"))
+            IntentMatchers.hasData(Uri.parse("https://example.com/file.pdf")),
         )
     }
 
@@ -87,5 +87,5 @@ class UltrascansActivityTest {
             .inRoot(ToastMatcher())
             .check(matches(isDisplayed()))
     }
-    //(Android Developers, n.d.)
+    // (Android Developers, n.d.)
 }

@@ -6,5 +6,5 @@ data class Patient(
     override val email: String = "",
     override val role: Role = Role.PATIENT,
     val profileData: String = "",
-    val appointments: List<Appointment> = emptyList()
+    val appointments: List<Appointment> = emptyList(),
 ) : User(id, name, email, role)

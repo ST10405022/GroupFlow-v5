@@ -12,12 +12,12 @@ import com.example.groupflow.core.domain.Role
 import com.example.groupflow.core.domain.User
 import com.example.groupflow.data.review.FirebaseReviewRepo
 import com.example.groupflow.databinding.ActivityLeaveReviewBinding
-import com.example.groupflow.ui.notifications.NotificationsActivity
 import com.example.groupflow.ui.appointments.AppointmentsActivity
 import com.example.groupflow.ui.auth.LoginActivity
 import com.example.groupflow.ui.auth.SessionCreation
 import com.example.groupflow.ui.hubs.EmployeeHubActivity
 import com.example.groupflow.ui.info.DoctorInfoActivity
+import com.example.groupflow.ui.notifications.NotificationsActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,7 +28,7 @@ class LeaveReviewActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLeaveReviewBinding
     private var currentUser: User? = null
 
-    private fun showMessage(message: String){                       // (Android Developers, 2025)
+    private fun showMessage(message: String) { // (Android Developers, 2025)
         Toast.makeText(this@LeaveReviewActivity, message, Toast.LENGTH_SHORT).show()
     }
 
@@ -50,31 +50,29 @@ class LeaveReviewActivity : AppCompatActivity() {
             val rating = binding.ratingBar.rating.toInt()
             val comment = binding.editTextReview.text.toString()
 
-            if (rating < 1 || rating > 5 || comment.isEmpty())
-            {
+            if (rating < 1 || rating > 5 || comment.isEmpty()) {
                 showMessage("Provide a comment and a rating")
                 return@setOnClickListener
             }
 
-            val review = Review(
-                patientId = currentUser?.id,
-                clinicId = "",
-                rating = rating,
-                comment = comment,
-                createdDate = LocalDateTime.now()
-            )
+            val review =
+                Review(
+                    patientId = currentUser?.id,
+                    clinicId = "",
+                    rating = rating,
+                    comment = comment,
+                    createdDate = LocalDateTime.now(),
+                )
 
             Log.d("LeaveReviewActivity", "Review to be submitted: $review")
             CoroutineScope(Dispatchers.IO).launch {
                 val result = FirebaseReviewRepo().addReview(review)
-                withContext(Dispatchers.Main){
-                    if (result.isSuccess){
+                withContext(Dispatchers.Main) {
+                    if (result.isSuccess) {
                         showMessage("Review submitted")
                         Log.d("LeaveReviewActivity", "Review submitted: $review")
                         finish()
-                    }
-                    else
-                    {
+                    } else {
                         showMessage("Failed to submit review")
                         Log.d("LeaveReviewActivity", "Failed to submit review: ${result.exceptionOrNull()}")
                     }
