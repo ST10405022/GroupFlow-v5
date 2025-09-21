@@ -121,25 +121,30 @@ The access control model follows RBAC, where Firebase Auth and Firestore Securit
 ---
 
 # Current Sprint
-## ✅ Sprint 7: Secondary Feature Implementation (Deadline: 15th September)
+## ✅ Sprint 8: Security, DevOps, and Deployment (Deadline: 22nd September)
 ### 🎯 Goals
-- Implement **Push Notifications** using Firebase Cloud Messaging (FCM) with role-based targeting (Patients vs Employees).
-- Implement **Reviews** functionality:
-  - Patients can submit reviews (`LeaveReviewActivity`).
-  - Both Patients and Employees can view reviews (`ReviewsActivity` with `ReviewAdapter`).
+- Implement **security best practices** across Firebase services and Android components.
+- Enhance the **DevOps pipeline** with static analysis, dependency scanning, and automated testing.
+- Configure deployment to Firebase Cloud Functions and prepare for production rollout.
 
 ### ✅ Objectives Achieved
 
-- 🔔 **Notifications (FCM + Cloud Functions)**:
-  - Integrated Firebase Cloud Messaging in MyFirebaseMessagingService.
-  - Configured `index.js` Cloud Function to send notifications per patient/employee role.
-  - Patients receive scan upload notifications; Employees receive appointment requests.
-
-- 📝 **Reviews Module**:
-  - Added `LeaveReviewActivity` for patients to write reviews.
-  - Implemented `ReviewsActivity` + `ReviewAdapter` to fetch and display reviews dynamically from RTDB.
-  - Employees can read feedback to improve services.
-
+- 🔐 **Security Systems:**
+  - Configured Firebase Authentication with email/password and Google sign-in.
+  - Enabled **Multi-Factor Authentication (MFA)** for stronger login security.
+  - Secured **Realtime Database rules** to enforce role-based access (patients = read, employees = write).
+  - Encrypted ultrasound scans before upload, supplementing Firebase Storage encryption.
+- ⚙️ **DevOps Enhancements:**
+  - Expanded GitHub Actions pipeline to include:
+    - `Detekt` for Kotlin static analysis.
+    - `KtLint` for formatting enforcement.
+  - OWASP Dependency-Check for library vulnerability scanning.
+  - Automated testing runs with JUnit5, MockK, and Mockito on each PR/merge to `main`.
+- ☁️ **Cloud Deployment**:
+  - Built and deployed `index.js` Firebase Cloud Function for push notifications.
+  - Configured **Firebase Cloud Messaging (FCM)** to target patients and employees separately.
+  - Verified deployment with successful terminal logs and FCM notification delivery.
+  - **Crashlytics** integrated for runtime error monitoring and scalability readiness.
 ---
 
 # Previous Sprints
@@ -202,11 +207,33 @@ Set up the core infrastructure of the application, initialize the GitHub reposit
 
 ---
 
+## ✅ Sprint 7: Secondary Feature Implementation (Deadline: 15th September)
+### 🎯 Goals
+- Implement **Push Notifications** using Firebase Cloud Messaging (FCM) with role-based targeting (Patients vs Employees).
+- Implement **Reviews** functionality:
+  - Patients can submit reviews (`LeaveReviewActivity`).
+  - Both Patients and Employees can view reviews (`ReviewsActivity` with `ReviewAdapter`).
+
+### ✅ Objectives Achieved
+
+- 🔔 **Notifications (FCM + Cloud Functions)**:
+  - Integrated Firebase Cloud Messaging in MyFirebaseMessagingService.
+  - Configured `index.js` Cloud Function to send notifications per patient/employee role.
+  - Patients receive scan upload notifications; Employees receive appointment requests.
+
+- 📝 **Reviews Module**:
+  - Added `LeaveReviewActivity` for patients to write reviews.
+  - Implemented `ReviewsActivity` + `ReviewAdapter` to fetch and display reviews dynamically from RTDB.
+  - Employees can read feedback to improve services.
+
+---
+
 ## 💡 Summaries
 - Sprint 4 established a clean, modular structure with mock repos.
 - Sprint 5 integrated Firebase, role-based navigation, and lifecycle-aware coroutines.
 - Sprint 6 will finalize integration, strengthen testing, and deliver production readiness.
 - Sprint 7 extended the system with Appointment and review funtionalities, with real-time notifications via FCM.
+- Sprint 8 strengthened security, DevOps, and prepared the system for deployment.
 
 ---
 
