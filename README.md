@@ -8,7 +8,7 @@ This app uses **Firebase Realtime Database (RTDB)** for storing and synchronizin
 
 ---
 
-## 📦 Project Structure (Sprint 7)
+## 📦 Project Structure (Sprint 8)
 
 ```plaintext
 com.example.groupflow
